@@ -1,0 +1,25 @@
+<div class="dropdown dropdown-top dropdown-start">
+  <div tabindex="0" role="button" class="btn btn-ghost btn-circle" aria-label="Change theme" title="Change theme">
+    <ng-icon [name]="icon()" size="18" />
+  </div>
+  <ul tabindex="0" class="dropdown-content menu z-30 mb-2 w-40 rounded-box border border-border bg-surface-raised p-2 shadow-md">
+    <li>
+      <button type="button" [class.text-primary]="theme.preference() === 'light'" (click)="setPreference('light')">
+        <ng-icon name="lucideSun" size="15" />
+        Light
+      </button>
+    </li>
+    <li>
+      <button type="button" [class.text-primary]="theme.preference() === 'dark'" (click)="setPreference('dark')">
+        <ng-icon name="lucideMoon" size="15" />
+        Dark
+      </button>
+    </li>
+    <li>
+      <button type="button" [class.text-primary]="theme.preference() === 'system'" (click)="setPreference('system')">
+        <ng-icon name="lucideMonitor" size="15" />
+        System
+      </button>
+    </li>
+  </ul>
+</div>

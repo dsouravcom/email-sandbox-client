@@ -1,0 +1,25 @@
+<div class="grid h-full grid-cols-1 lg:grid-cols-[minmax(280px,360px)_1fr]">
+  <div class="min-h-0 border-border lg:block lg:border-r" [class.hidden]="!!emailId()">
+    <app-email-list
+      [mailboxId]="mailboxId()"
+      [emails]="emailStore.emails()"
+      [selectedEmailId]="emailStore.selectedEmailId()"
+      [loading]="emailStore.loading()"
+      [loadingMore]="emailStore.loadingMore()"
+      [hasMore]="emailStore.hasMore()"
+      [error]="emailStore.error()"
+      (loadMore)="emailStore.loadMore()"
+      (retry)="emailStore.loadFirstPage()"
+    />
+  </div>
+  <div class="min-h-0 lg:block" [class.hidden]="!emailId()">
+    <app-email-preview
+      [email]="emailStore.selectedEmail()"
+      [mailbox]="mailboxStore.selectedMailbox()"
+      [loading]="emailStore.selectedEmailLoading()"
+      [error]="emailStore.selectedEmailError()"
+      (retry)="retrySelectedEmail()"
+      (deleted)="onEmailDeleted()"
+    />
+  </div>
+</div>

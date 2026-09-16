@@ -1,0 +1,62 @@
+<div class="drawer lg:drawer-open h-screen">
+  <input id="app-drawer" type="checkbox" class="drawer-toggle" />
+
+  <div class="drawer-content flex h-screen flex-col overflow-hidden">
+    <header class="flex h-14 shrink-0 items-center gap-3 border-b border-border bg-surface px-4">
+      <label for="app-drawer" class="btn btn-ghost btn-sm btn-square lg:hidden" aria-label="Open menu">
+        <ng-icon name="lucideMenu" size="20" />
+      </label>
+      <app-organization-switcher />
+
+      @if (openMailbox(); as mailbox) {
+        <div class="h-5 w-px bg-border" aria-hidden="true"></div>
+        <nav class="flex min-w-0 items-center gap-1.5 text-sm" aria-label="Breadcrumb">
+          <a routerLink="/mailboxes" class="shrink-0 text-ink/50 transition-colors hover:text-ink">Mailbox</a>
+          <span class="shrink-0 text-ink/30">/</span>
+          @if (currentEmailTitle(); as emailTitle) {
+            <a
+              [routerLink]="['/mailbox', mailbox.id]"
+              class="max-w-[130px] truncate text-ink/50 transition-colors hover:text-ink sm:max-w-[180px] md:max-w-[220px]"
+              [title]="mailbox.name"
+            >
+              {{ mailbox.name }}
+            </a>
+            <span class="shrink-0 text-ink/30">/</span>
+            <span class="shrink-0 text-ink/50">Email</span>
+            <span class="shrink-0 text-ink/30">/</span>
+            <span
+              class="max-w-[150px] truncate font-medium text-ink sm:max-w-[240px] md:max-w-[340px]"
+              [title]="emailTitle"
+            >
+              {{ emailTitle }}
+            </span>
+          } @else {
+            <span class="truncate font-medium text-ink">{{ mailbox.name }}</span>
+          }
+        </nav>
+
+        <div class="flex-1"></div>
+
+        <button type="button" class="btn btn-outline btn-xs shrink-0 gap-1.5" (click)="showSmtpDialog.set(true)">
+          <ng-icon name="lucideKeyRound" size="13" />
+          Credentials
+        </button>
+      }
+    </header>
+
+    <main class="min-h-0 flex-1">
+      <router-outlet />
+    </main>
+  </div>
+
+  <div class="drawer-side z-40">
+    <label for="app-drawer" aria-label="Close menu" class="drawer-overlay"></label>
+    <app-sidebar />
+  </div>
+</div>
+
+@if (showSmtpDialog() && openMailbox(); as mailbox) {
+  <app-smtp-credentials-panel [mailbox]="mailbox" (closed)="showSmtpDialog.set(false)" />
+}
+
+<app-toast-container />

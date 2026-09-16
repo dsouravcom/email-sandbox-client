@@ -1,0 +1,49 @@
+<tr class="group transition-colors duration-150 hover:bg-surface-raised">
+  <td class="w-full">
+    <a [routerLink]="['/mailbox', mailbox().id]" class="flex items-center gap-3">
+      <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-field bg-surface-raised text-ink/60 group-hover:bg-surface">
+        <ng-icon name="lucideInbox" size="18" />
+      </div>
+      <div class="min-w-0">
+        <div class="flex items-center gap-2">
+          <p class="truncate font-medium text-ink">{{ mailbox().name }}</p>
+          @if (mailbox().status === 'paused') {
+            <span class="badge badge-warning badge-sm">Paused</span>
+          }
+        </div>
+        @if (mailbox().description) {
+          <p class="truncate text-xs text-ink/50">{{ mailbox().description }}</p>
+        }
+      </div>
+    </a>
+  </td>
+  <td class="whitespace-nowrap text-ink/70">
+    <a [routerLink]="['/mailbox', mailbox().id]" class="block">
+      @if (mailbox().stats; as stats) {
+        {{ stats.totalCapped ? stats.totalCount + '+' : stats.totalCount }}
+      } @else {
+        —
+      }
+    </a>
+  </td>
+  <td class="whitespace-nowrap text-ink/70">
+    <a [routerLink]="['/mailbox', mailbox().id]" class="block">
+      @if (mailbox().stats?.lastReceivedAt; as lastReceivedAt) {
+        {{ lastReceivedAt | date: 'short' }}
+      } @else {
+        Never
+      }
+    </a>
+  </td>
+  <td class="w-px">
+    <div class="dropdown dropdown-top dropdown-end">
+      <div tabindex="0" role="button" class="btn btn-ghost btn-sm btn-square" aria-label="Mailbox actions">
+        <ng-icon name="lucideMoreVertical" size="16" />
+      </div>
+      <ul tabindex="0" class="dropdown-content menu z-50 mb-1 w-36 rounded-box border border-border bg-surface-raised p-2 shadow-lg">
+        <li><button type="button" (click)="edit.emit(mailbox())">Edit</button></li>
+        <li><button type="button" class="text-error" (click)="delete.emit(mailbox())">Delete</button></li>
+      </ul>
+    </div>
+  </td>
+</tr>

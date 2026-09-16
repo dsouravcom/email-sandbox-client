@@ -39,6 +39,10 @@ testem.log
 /typings
 __screenshots__/
 
+# Per-machine config (see .env.example)
+.env
+src/app/core/http/runtime-config.generated.ts
+
 # System files
 .DS_Store
 Thumbs.db

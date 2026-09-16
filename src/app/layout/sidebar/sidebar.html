@@ -1,0 +1,26 @@
+<aside class="flex h-full w-16 min-w-16 flex-col items-center gap-1 border-r border-border bg-surface py-4">
+  <a
+    routerLink="/mailboxes"
+    [class.bg-surface-raised]="isEmailSectionActive()"
+    [class.text-primary]="isEmailSectionActive()"
+    class="tooltip tooltip-right flex h-11 w-11 items-center justify-center rounded-field text-ink/60 transition-colors hover:bg-surface-raised hover:text-ink"
+    data-tip="Email"
+    aria-label="Email"
+  >
+    <ng-icon name="lucideInbox" size="20" />
+  </a>
+  <a
+    routerLink="/organization"
+    routerLinkActive="bg-surface-raised text-primary"
+    class="tooltip tooltip-right flex h-11 w-11 items-center justify-center rounded-field text-ink/60 transition-colors hover:bg-surface-raised hover:text-ink"
+    data-tip="Organization settings"
+    aria-label="Organization settings"
+  >
+    <ng-icon name="lucideBuilding2" size="20" />
+  </a>
+
+  <div class="flex-1"></div>
+
+  <app-theme-switcher class="mb-1" />
+  <app-profile-menu />
+</aside>

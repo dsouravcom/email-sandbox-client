@@ -1,0 +1,79 @@
+<div class="mx-auto h-full max-w-6xl overflow-y-auto px-6 py-8 lg:px-10">
+  <div class="flex items-center justify-between gap-4">
+    <div>
+      <h1 class="text-xl font-semibold text-ink">Mailboxes</h1>
+      <p class="mt-1 text-sm text-ink/60">
+        Every mailbox has its own SMTP credentials — point any app at one to capture its test emails here.
+      </p>
+    </div>
+    <button
+      type="button"
+      class="btn btn-primary gap-2"
+      [disabled]="!organizationStore.currentOrganizationId()"
+      (click)="showCreateDialog.set(true)"
+    >
+      <ng-icon name="lucidePlus" size="16" />
+      Create mailbox
+    </button>
+  </div>
+
+  <div class="mt-6">
+    @if (mailboxStore.error(); as message) {
+      <app-error-state [message]="message" (retry)="retryLoad()" />
+    } @else if (mailboxStore.loading() && mailboxStore.mailboxes().length === 0) {
+      <div class="rounded-box border border-border bg-surface-raised p-4">
+        <app-skeleton [lines]="4" />
+      </div>
+    } @else if (mailboxStore.mailboxes().length === 0) {
+      <app-empty-state
+        icon="lucideInbox"
+        title="No mailboxes yet"
+        description="Create a mailbox to get a dedicated inbox and SMTP credentials for testing."
+      >
+        <button type="button" class="btn btn-primary btn-sm mt-2" (click)="showCreateDialog.set(true)">Create mailbox</button>
+      </app-empty-state>
+    } @else {
+      <div class="overflow-visible rounded-box border border-border">
+        <table class="table">
+          <thead>
+            <tr class="text-xs text-ink/50">
+              <th class="font-medium">Name</th>
+              <th class="font-medium">Received</th>
+              <th class="font-medium">Last message</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (mailbox of mailboxStore.mailboxes(); track mailbox.id) {
+              <app-mailbox-card [mailbox]="mailbox" (edit)="editingMailbox.set($event)" (delete)="requestDelete($event)" />
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </div>
+</div>
+
+@if (showCreateDialog() && organizationStore.currentOrganizationId(); as organizationId) {
+  <app-create-mailbox-dialog
+    [organizationId]="organizationId"
+    (closed)="showCreateDialog.set(false)"
+    (created)="showCreateDialog.set(false)"
+  />
+}
+
+@if (editingMailbox(); as mailbox) {
+  <app-edit-mailbox-dialog
+    [mailbox]="mailbox"
+    (closed)="editingMailbox.set(null)"
+    (updated)="editingMailbox.set(null)"
+  />
+}
+
+<app-confirm-dialog
+  title="Delete mailbox"
+  [message]="'This deletes \'' + (deletingMailbox()?.name ?? '') + '\' and every email in it. This can\'t be undone.'"
+  confirmLabel="Delete"
+  [danger]="true"
+  (confirmed)="confirmDelete()"
+/>

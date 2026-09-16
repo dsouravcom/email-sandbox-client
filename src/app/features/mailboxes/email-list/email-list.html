@@ -1,0 +1,41 @@
+<div class="flex h-full flex-col">
+  @if (!loading() && emails().length > 0) {
+    <div class="relative shrink-0 border-b border-border p-2">
+      <ng-icon name="lucideSearch" size="15" class="pointer-events-none absolute left-5 top-1/2 -translate-y-1/2 text-ink/40" />
+      <input
+        type="search"
+        placeholder="Search this list"
+        class="form-input py-1.5 pl-8 text-sm"
+        [value]="searchQuery()"
+        (input)="searchQuery.set($any($event.target).value)"
+      />
+    </div>
+  }
+
+  <div class="min-h-0 flex-1">
+    @if (error(); as message) {
+      <app-error-state [message]="message" (retry)="retry.emit()" />
+    } @else if (loading() && emails().length === 0) {
+      <app-skeleton [lines]="6" />
+    } @else if (emails().length === 0) {
+      <app-empty-state
+        icon="lucideInbox"
+        title="No emails yet"
+        description="Send an email through this mailbox's SMTP credentials and it will appear here."
+      />
+    } @else if (filteredEmails().length === 0) {
+      <app-empty-state icon="lucideSearch" title="No matches" description="Nothing in the loaded list matches your search." />
+    } @else {
+      <div class="h-full overflow-y-auto" (scroll)="onScroll($event)">
+        @for (email of filteredEmails(); track email.id) {
+          <app-email-list-item [email]="email" [mailboxId]="mailboxId()" [active]="email.id === selectedEmailId()" />
+        }
+        @if (loadingMore()) {
+          <div class="flex justify-center py-4">
+            <span class="loading loading-spinner loading-sm text-ink/40"></span>
+          </div>
+        }
+      </div>
+    }
+  </div>
+</div>

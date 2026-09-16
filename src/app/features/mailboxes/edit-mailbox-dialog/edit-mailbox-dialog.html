@@ -1,0 +1,52 @@
+<dialog #dialog class="modal" (close)="dismiss()">
+  <div class="modal-box">
+    <h3 class="text-lg font-semibold text-ink">Edit mailbox</h3>
+
+    <form [formRoot]="mailboxForm" class="mt-5 space-y-4">
+      <div>
+        <label for="edit-mailbox-name" class="form-label">Name</label>
+        <input
+          id="edit-mailbox-name"
+          type="text"
+          class="form-input"
+          [formField]="mailboxForm.name"
+          [attr.aria-invalid]="mailboxForm.name().touched() && mailboxForm.name().invalid()"
+        />
+        <app-field-error [field]="mailboxForm.name" />
+      </div>
+
+      <div>
+        <label for="edit-mailbox-description" class="form-label">Description <span class="text-ink/40">(optional)</span></label>
+        <textarea
+          id="edit-mailbox-description"
+          rows="2"
+          class="form-input resize-none"
+          [formField]="mailboxForm.description"
+        ></textarea>
+        <app-field-error [field]="mailboxForm.description" />
+      </div>
+
+      <div>
+        <label for="edit-mailbox-status" class="form-label">Status</label>
+        <select id="edit-mailbox-status" class="form-input" [formField]="mailboxForm.status">
+          <option value="active">Active</option>
+          <option value="paused">Paused</option>
+        </select>
+      </div>
+
+      @if (errorMessage(); as text) {
+        <p class="alert alert-error text-sm" role="alert">{{ text }}</p>
+      }
+
+      <div class="modal-action">
+        <button type="button" class="btn btn-ghost" (click)="close()">Cancel</button>
+        <button type="submit" class="btn btn-primary" [disabled]="mailboxForm().submitting()">
+          {{ mailboxForm().submitting() ? 'Saving…' : 'Save changes' }}
+        </button>
+      </div>
+    </form>
+  </div>
+  <form method="dialog" class="modal-backdrop">
+    <button aria-label="Close">close</button>
+  </form>
+</dialog>

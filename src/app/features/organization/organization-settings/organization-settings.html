@@ -1,0 +1,65 @@
+<div class="mx-auto h-full max-w-2xl overflow-y-auto px-6 py-8">
+  <h1 class="text-xl font-semibold text-ink">Organization settings</h1>
+
+  @if (organization(); as organization) {
+    <div class="mt-6 grid grid-cols-2 gap-x-6 gap-y-3 rounded-box border border-border bg-surface-raised p-4 text-sm sm:grid-cols-4">
+      <div>
+        <p class="text-ink/50">Plan</p>
+        <p class="font-medium text-ink capitalize">{{ organization.plan }}</p>
+      </div>
+      <div>
+        <p class="text-ink/50">Your role</p>
+        <p class="font-medium text-ink capitalize">{{ organization.role }}</p>
+      </div>
+      <div>
+        <p class="text-ink/50">Max mailboxes</p>
+        <p class="font-medium text-ink">{{ organization.maxMailboxes }}</p>
+      </div>
+      <div>
+        <p class="text-ink/50">Max messages / mailbox</p>
+        <p class="font-medium text-ink">{{ organization.maxMessagesPerMailbox }}</p>
+      </div>
+    </div>
+
+    <form [formRoot]="settingsForm" class="mt-6 space-y-5">
+      <div>
+        <label for="org-name" class="form-label">Organization name</label>
+        <input
+          id="org-name"
+          type="text"
+          class="form-input"
+          [formField]="settingsForm.name"
+          [attr.aria-invalid]="settingsForm.name().touched() && settingsForm.name().invalid()"
+        />
+        <app-field-error [field]="settingsForm.name" />
+      </div>
+
+      <div>
+        <label for="org-retention" class="form-label">Retention period (days)</label>
+        <input
+          id="org-retention"
+          type="number"
+          class="form-input max-w-40"
+          [formField]="settingsForm.retentionDays"
+          [attr.aria-invalid]="settingsForm.retentionDays().touched() && settingsForm.retentionDays().invalid()"
+        />
+        <p class="mt-1 text-xs text-ink/50">How long a mailbox keeps emails before the default cleanup removes them.</p>
+        <app-field-error [field]="settingsForm.retentionDays" />
+      </div>
+
+      @if (errorMessage(); as message) {
+        <p class="alert alert-error text-sm" role="alert">{{ message }}</p>
+      }
+
+      @if (canEdit()) {
+        <button type="submit" class="btn btn-primary" [disabled]="settingsForm().submitting()">
+          {{ settingsForm().submitting() ? 'Saving…' : 'Save changes' }}
+        </button>
+      } @else {
+        <p class="text-xs text-ink/50">Only organization admins and owners can change these settings.</p>
+      }
+    </form>
+  } @else {
+    <div class="mt-6 h-40 animate-pulse rounded-box bg-surface-raised"></div>
+  }
+</div>

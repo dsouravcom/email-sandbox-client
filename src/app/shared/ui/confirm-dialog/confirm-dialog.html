@@ -1,0 +1,17 @@
+<dialog #dialog class="modal">
+  <div class="modal-box">
+    <h3 class="text-lg font-semibold text-ink">{{ title() }}</h3>
+    <p class="mt-2 text-sm text-ink/70">{{ message() }}</p>
+    <div class="modal-action">
+      <form method="dialog" class="contents">
+        <button type="submit" class="btn btn-ghost">Cancel</button>
+      </form>
+      <button type="button" class="btn" [class.btn-error]="danger()" [class.btn-primary]="!danger()" (click)="confirm()">
+        {{ confirmLabel() }}
+      </button>
+    </div>
+  </div>
+  <form method="dialog" class="modal-backdrop">
+    <button aria-label="Close">close</button>
+  </form>
+</dialog>

@@ -1,0 +1,28 @@
+<a
+  [routerLink]="['/mailbox', mailboxId(), 'email', email().id]"
+  class="flex flex-col gap-1 border-b border-border px-4 py-3 transition-colors hover:bg-surface-raised"
+  [class.bg-surface-raised]="active()"
+>
+  <div class="flex items-center justify-between gap-2">
+    <span class="truncate text-sm" [class]="email().read ? 'text-ink/70' : 'font-semibold text-ink'">
+      {{ email().from?.name || email().from?.address || '(unknown sender)' }}
+    </span>
+    <span class="shrink-0 text-xs text-ink/40">{{ email().receivedAt | date: 'short' }}</span>
+  </div>
+
+  <div class="flex items-center gap-1.5">
+    @if (!email().read) {
+      <span class="h-1.5 w-1.5 shrink-0 rounded-full bg-primary" aria-hidden="true"></span>
+    }
+    <span class="min-w-0 flex-1 truncate text-sm" [class]="email().read ? 'text-ink/70' : 'font-medium text-ink'">
+      {{ email().subject || '(no subject)' }}
+    </span>
+    @if (email().hasAttachments) {
+      <ng-icon name="lucidePaperclip" size="13" class="shrink-0 text-ink/40" />
+    }
+  </div>
+
+  @if (email().preview) {
+    <p class="truncate text-xs text-ink/50">{{ email().preview }}</p>
+  }
+</a>

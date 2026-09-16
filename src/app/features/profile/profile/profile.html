@@ -1,0 +1,44 @@
+<div class="mx-auto h-full max-w-2xl overflow-y-auto px-6 py-8">
+  <h1 class="text-xl font-semibold text-ink">Profile</h1>
+
+  <div class="mt-6 rounded-box border border-border bg-surface-raised p-6">
+    @if (profile.value(); as user) {
+      <dl class="grid gap-6 sm:grid-cols-2">
+        <div>
+          <dt class="text-sm text-ink/50">Name</dt>
+          <dd class="mt-1 font-medium text-ink">{{ user.name }}</dd>
+        </div>
+        <div>
+          <dt class="text-sm text-ink/50">Email</dt>
+          <dd class="mt-1 font-medium text-ink">{{ user.email }}</dd>
+        </div>
+        <div>
+          <dt class="text-sm text-ink/50">Email status</dt>
+          <dd class="mt-1">
+            @if (user.emailVerifiedAt) {
+              <span class="badge badge-success badge-sm">Verified {{ user.emailVerifiedAt | date: 'mediumDate' }}</span>
+            } @else {
+              <span class="badge badge-warning badge-sm">Not verified</span>
+            }
+          </dd>
+        </div>
+        <div>
+          <dt class="text-sm text-ink/50">Member since</dt>
+          <dd class="mt-1 font-medium text-ink">{{ user.createdAt | date: 'longDate' }}</dd>
+        </div>
+      </dl>
+
+      <div class="mt-6 border-t border-border pt-4">
+        <p class="text-sm font-medium text-ink">Password</p>
+        <p class="mt-1 text-sm text-ink/60">
+          Resetting your password signs you out everywhere else.
+        </p>
+        <a routerLink="/forgot-password" class="btn btn-outline btn-sm mt-2">Reset password</a>
+      </div>
+    } @else if (profileError(); as message) {
+      <app-error-state [message]="message" (retry)="profile.reload()" />
+    } @else {
+      <app-skeleton [lines]="4" />
+    }
+  </div>
+</div>
