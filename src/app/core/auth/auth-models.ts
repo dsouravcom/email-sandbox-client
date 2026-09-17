@@ -37,6 +37,7 @@ export interface RegisterRequest {
   name: string;
   email: string;
   password: string;
+  turnstileToken: string;
 }
 
 export interface LoginRequest {
@@ -45,6 +46,11 @@ export interface LoginRequest {
 }
 
 export interface VerifyEmailRequest {
+  email: string;
+  code: string;
+}
+
+export interface VerifyLoginRequest {
   email: string;
   code: string;
 }
@@ -63,6 +69,7 @@ export const AuthErrorCode = {
   OTP_INVALID: 'OTP_INVALID',
   OTP_EXPIRED: 'OTP_EXPIRED',
   SESSION_EXPIRED: 'SESSION_EXPIRED',
+  TURNSTILE_FAILED: 'TURNSTILE_FAILED',
 } as const;
 
 /** Must match the server's OTP settings. */

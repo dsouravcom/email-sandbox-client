@@ -4,7 +4,7 @@ import { RouterLink } from '@angular/router';
 import { NgIcon } from '@ng-icons/core';
 import { firstValueFrom } from 'rxjs';
 import { EmailApi } from '../../../core/emails/email-api';
-import { EmailAddress, EmailAttachment, EmailDetail } from '../../../core/emails/email-models';
+import { EmailAddress, EmailDetail } from '../../../core/emails/email-models';
 import { EmailStore } from '../../../core/emails/email-store';
 import { getApiErrorMessage } from '../../../core/http/api-error';
 import { Mailbox } from '../../../core/mailboxes/mailbox-models';
@@ -16,7 +16,7 @@ import { ErrorState } from '../../../shared/ui/error-state/error-state';
 import { SafeEmailHtml } from '../../../shared/ui/safe-email-html/safe-email-html';
 import { Skeleton } from '../../../shared/ui/skeleton/skeleton';
 
-type ContentTab = 'html' | 'text' | 'raw';
+type ContentTab = 'html' | 'text';
 type DeviceMode = 'desktop' | 'tablet' | 'mobile';
 
 const DEVICE_WIDTH: Record<DeviceMode, string> = {
@@ -32,12 +32,6 @@ function formatAddress(address: EmailAddress | null | undefined): string {
 
 function formatAddresses(addresses: EmailAddress[]): string {
   return addresses.length > 0 ? addresses.map(formatAddress).join(', ') : '(none)';
-}
-
-function formatSize(bytes: number): string {
-  if (bytes < 1024) return `${bytes} B`;
-  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
-  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
 }
 
 @Component({
@@ -63,10 +57,6 @@ export class EmailPreview {
   protected readonly htmlLoading = signal(false);
   protected readonly htmlError = signal<string | null>(null);
 
-  protected readonly rawContent = signal<string | null>(null);
-  protected readonly rawLoading = signal(false);
-  protected readonly rawError = signal<string | null>(null);
-
   protected readonly contentTab = signal<ContentTab>('html');
   protected readonly deviceMode = signal<DeviceMode>('desktop');
   protected readonly deviceWidthClass = computed(() => DEVICE_WIDTH[this.deviceMode()]);
@@ -75,16 +65,12 @@ export class EmailPreview {
 
   protected readonly formatAddress = formatAddress;
   protected readonly formatAddresses = formatAddresses;
-  protected readonly formatSize = formatSize;
 
   constructor() {
     effect(() => {
       const detail = this.email();
-      this.rawContent.set(null);
-      this.rawError.set(null);
-
       if (detail) {
-        this.contentTab.set(detail.hasHtml ? 'html' : detail.hasText ? 'text' : 'raw');
+        this.contentTab.set(!detail.hasHtml && detail.hasText ? 'text' : 'html');
       }
 
       if (detail?.hasHtml) {
@@ -118,26 +104,6 @@ export class EmailPreview {
 
   protected selectContentTab(tab: ContentTab): void {
     this.contentTab.set(tab);
-    if (tab === 'raw' && this.rawContent() === null && !this.rawLoading()) {
-      void this.loadRaw();
-    }
-  }
-
-  protected async loadRaw(): Promise<void> {
-    const detail = this.email();
-    if (!detail) return;
-    this.rawLoading.set(true);
-    this.rawError.set(null);
-    try {
-      const text = await firstValueFrom(this.emailApi.fetchRawText(detail.mailboxId, detail.id));
-      if (this.email()?.id !== detail.id) return;
-      this.rawContent.set(text);
-    } catch (error) {
-      if (this.email()?.id !== detail.id) return;
-      this.rawError.set(getApiErrorMessage(error));
-    } finally {
-      this.rawLoading.set(false);
-    }
   }
 
   protected async toggleRead(): Promise<void> {
@@ -145,26 +111,6 @@ export class EmailPreview {
     if (!detail) return;
     try {
       await this.emailStore.setRead(detail.id, !detail.read);
-    } catch (error) {
-      this.toast.error(getApiErrorMessage(error));
-    }
-  }
-
-  protected async downloadRaw(): Promise<void> {
-    const detail = this.email();
-    if (!detail) return;
-    try {
-      await this.emailApi.downloadRaw(detail.mailboxId, detail.id);
-    } catch (error) {
-      this.toast.error(getApiErrorMessage(error));
-    }
-  }
-
-  protected async downloadAttachment(attachment: EmailAttachment): Promise<void> {
-    const detail = this.email();
-    if (!detail) return;
-    try {
-      await this.emailApi.downloadAttachment(detail.mailboxId, detail.id, attachment);
     } catch (error) {
       this.toast.error(getApiErrorMessage(error));
     }

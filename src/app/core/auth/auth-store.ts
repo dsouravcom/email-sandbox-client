@@ -1,7 +1,13 @@
 import { computed, inject, Service, signal } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
 import { AuthApi } from './auth-api';
-import { AuthResponse, LoginRequest, ProvisioningResult, User, VerifyEmailRequest } from './auth-models';
+import {
+  AuthResponse,
+  ProvisioningResult,
+  User,
+  VerifyEmailRequest,
+  VerifyLoginRequest,
+} from './auth-models';
 
 /**
  * Single source of truth for the signed-in user.
@@ -28,13 +34,14 @@ export class AuthStore {
     await this.refreshAccessToken();
   }
 
-  async login(credentials: LoginRequest): Promise<void> {
-    this.setSession(await firstValueFrom(this.api.login(credentials)));
-  }
-
   /** Verifying the email also signs the user in. */
   async verifyEmail(request: VerifyEmailRequest): Promise<void> {
     this.setSession(await firstValueFrom(this.api.verifyEmail(request)));
+  }
+
+  /** Confirms the sign-in code emailed after a correct password and signs the user in. */
+  async verifyLogin(request: VerifyLoginRequest): Promise<void> {
+    this.setSession(await firstValueFrom(this.api.verifyLogin(request)));
   }
 
   /**

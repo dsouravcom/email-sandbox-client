@@ -1,0 +1,60 @@
+<h1 class="text-xl font-semibold text-ink">Enter your sign-in code</h1>
+<p class="mt-1 text-sm text-ink/60">
+  Enter the 6-digit code we emailed you. It expires in 10 minutes.
+</p>
+
+@if (notice(); as text) {
+  <p class="alert alert-success mt-6" role="status">{{ text }}</p>
+}
+
+<form [formRoot]="verifyForm" class="mt-6 space-y-5">
+  <div>
+    <label for="email" class="form-label">Email</label>
+    <input
+      id="email"
+      type="email"
+      autocomplete="email"
+      class="form-input"
+      [formField]="verifyForm.email"
+      [attr.aria-invalid]="verifyForm.email().touched() && verifyForm.email().invalid()"
+    />
+    <app-field-error [field]="verifyForm.email" />
+  </div>
+
+  <div>
+    <label for="code" class="form-label">Sign-in code</label>
+    <input
+      id="code"
+      type="text"
+      inputmode="numeric"
+      autocomplete="one-time-code"
+      placeholder="000000"
+      class="form-input text-center font-mono text-lg tracking-[0.5em]"
+      [formField]="verifyForm.code"
+      [attr.aria-invalid]="verifyForm.code().touched() && verifyForm.code().invalid()"
+    />
+    <app-field-error [field]="verifyForm.code" />
+  </div>
+
+  @if (errorMessage(); as text) {
+    <p class="alert alert-error" role="alert">{{ text }}</p>
+  }
+
+  <button type="submit" class="btn btn-primary w-full" [disabled]="verifyForm().submitting()">
+    {{ verifyForm().submitting() ? 'Signing in…' : 'Verify and sign in' }}
+  </button>
+</form>
+
+<p class="mt-6 text-center text-sm text-ink/70">
+  Didn't get the code?
+  @if (resendCooldown.remaining() > 0) {
+    <span class="text-ink/40">Resend in {{ resendCooldown.remaining() }}s</span>
+  } @else {
+    <button type="button" class="link link-primary" [disabled]="resending()" (click)="resend()">
+      Resend code
+    </button>
+  }
+</p>
+<p class="mt-2 text-center text-sm">
+  <a routerLink="/login" class="link link-primary">Back to sign in</a>
+</p>

@@ -1,10 +1,9 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Service } from '@angular/core';
-import { firstValueFrom, Observable } from 'rxjs';
+import { Observable } from 'rxjs';
 import { CursorPage } from '../pagination/pagination-models';
 import { API_BASE_URL } from '../http/api-base-url';
-import { triggerBlobDownload } from '../../shared/utils/download';
-import { BulkDeleteRequest, EmailAttachment, EmailDetail, EmailListQuery, EmailSummary, MarkReadRequest } from './email-models';
+import { BulkDeleteRequest, EmailDetail, EmailListQuery, EmailSummary, MarkReadRequest } from './email-models';
 
 interface ReadAllResponse {
   updatedCount: number;
@@ -68,27 +67,5 @@ export class EmailApi {
    */
   fetchSandboxedHtml(mailboxId: string, emailId: string): Observable<string> {
     return this.http.get(`${this.base}/mailboxes/${mailboxId}/emails/${emailId}/html`, { responseType: 'text' });
-  }
-
-  /** The raw `.eml` source as text, for inline display (e.g. a "Raw" tab) rather than triggering a download. */
-  fetchRawText(mailboxId: string, emailId: string): Observable<string> {
-    return this.http.get(`${this.base}/mailboxes/${mailboxId}/emails/${emailId}/raw`, { responseType: 'text' });
-  }
-
-  /** Downloads the message's raw `.eml` file. Also Bearer-authenticated, so this fetches a blob rather than navigating to the URL. */
-  async downloadRaw(mailboxId: string, emailId: string): Promise<void> {
-    const blob = await firstValueFrom(
-      this.http.get(`${this.base}/mailboxes/${mailboxId}/emails/${emailId}/raw`, { responseType: 'blob' }),
-    );
-    triggerBlobDownload(blob, `email-${emailId}.eml`);
-  }
-
-  async downloadAttachment(mailboxId: string, emailId: string, attachment: EmailAttachment): Promise<void> {
-    const blob = await firstValueFrom(
-      this.http.get(`${this.base}/mailboxes/${mailboxId}/emails/${emailId}/attachments/${attachment.id}/download`, {
-        responseType: 'blob',
-      }),
-    );
-    triggerBlobDownload(blob, attachment.filename ?? attachment.id);
   }
 }

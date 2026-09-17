@@ -4,19 +4,6 @@ export interface EmailAddress {
   name?: string | null;
 }
 
-/** Mirrors the API's `attachmentSummarySchema`. */
-export interface EmailAttachment {
-  id: string;
-  filename: string | null;
-  contentType: string | null;
-  sizeBytes: number;
-  isInline: boolean;
-  /** For `cid:` inline image references inside `htmlBody`. */
-  contentId: string | null;
-  /** Relative to the API base URL, e.g. "mailboxes/:mailboxId/emails/:emailId/attachments/:id/download". */
-  downloadUrl: string;
-}
-
 /**
  * A row in an email list, and the payload of the realtime `email.received`
  * event. Mirrors the API's `emailSummarySchema` — notably it DOES include a
@@ -57,11 +44,8 @@ export interface EmailDetail extends EmailSummary {
   htmlBody: string | null;
   /** Relative path to the sandboxed HTML render endpoint; requires the Bearer token like any other API call. */
   htmlUrl: string | null;
-  /** Relative path to the raw .eml download; requires the Bearer token like any other API call. */
-  rawUrl: string | null;
   headers: Record<string, string[]>;
   parseWarnings: string[] | null;
-  attachments: EmailAttachment[];
 }
 
 /** `GET /mailboxes/:id/emails` query params. */
@@ -84,6 +68,5 @@ export interface BulkDeleteRequest {
 /** Error codes the API uses for cases the UI handles specially. */
 export const EmailErrorCode = {
   EMAIL_NOT_FOUND: 'EMAIL_NOT_FOUND',
-  ATTACHMENT_NOT_FOUND: 'ATTACHMENT_NOT_FOUND',
   INVALID_CURSOR: 'INVALID_CURSOR',
 } as const;

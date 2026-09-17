@@ -9,6 +9,7 @@ import {
   RegisterRequest,
   ResetPasswordRequest,
   VerifyEmailRequest,
+  VerifyLoginRequest,
 } from './auth-models';
 
 /**
@@ -39,8 +40,21 @@ export class AuthApi {
     );
   }
 
-  login(body: LoginRequest): Observable<AuthResponse> {
-    return this.http.post<AuthResponse>(`${this.url}/login`, body, this.options());
+  /** Checks the password and emails a one-time sign-in code; `verifyLogin` completes the sign-in. */
+  login(body: LoginRequest): Observable<MessageResponse> {
+    return this.http.post<MessageResponse>(`${this.url}/login`, body, this.options());
+  }
+
+  verifyLogin(body: VerifyLoginRequest): Observable<AuthResponse> {
+    return this.http.post<AuthResponse>(`${this.url}/verify-login`, body, this.options());
+  }
+
+  resendLoginCode(email: string): Observable<MessageResponse> {
+    return this.http.post<MessageResponse>(
+      `${this.url}/resend-login-code`,
+      { email },
+      this.options(),
+    );
   }
 
   refresh(): Observable<AuthResponse> {

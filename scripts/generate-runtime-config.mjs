@@ -20,6 +20,12 @@ if (!apiBaseUrl) {
   process.exit(1);
 }
 
+const turnstileSiteKey = process.env.TURNSTILE_SITE_KEY;
+if (!turnstileSiteKey) {
+  console.error('TURNSTILE_SITE_KEY is not set in client/.env.');
+  process.exit(1);
+}
+
 const outDir = join(dirname(fileURLToPath(import.meta.url)), '..', 'src', 'app', 'core', 'http');
 const outFile = join(outDir, 'runtime-config.generated.ts');
 
@@ -27,5 +33,6 @@ writeFileSync(
   outFile,
   '// AUTO-GENERATED from .env by scripts/generate-runtime-config.mjs.\n' +
     '// Do not edit by hand and do not commit this file.\n' +
-    `export const RUNTIME_API_BASE_URL = ${JSON.stringify(apiBaseUrl)};\n`,
+    `export const RUNTIME_API_BASE_URL = ${JSON.stringify(apiBaseUrl)};\n` +
+    `export const RUNTIME_TURNSTILE_SITE_KEY = ${JSON.stringify(turnstileSiteKey)};\n`,
 );

@@ -39,17 +39,6 @@
           >
             <ng-icon [name]="detail.read ? 'lucideMail' : 'lucideMailOpen'" size="17" />
           </button>
-          @if (detail.rawUrl) {
-            <button
-              type="button"
-              class="btn btn-ghost btn-sm btn-square"
-              aria-label="Download .eml"
-              title="Download .eml"
-              (click)="downloadRaw()"
-            >
-              <ng-icon name="lucideDownload" size="17" />
-            </button>
-          }
           <button
             type="button"
             class="btn btn-ghost btn-sm btn-square text-error"
@@ -63,18 +52,6 @@
         <span class="whitespace-nowrap text-xs text-ink/40">{{ detail.receivedAt | date: 'medium' }}</span>
       </div>
     </div>
-
-    @if (detail.attachments.length) {
-      <div class="flex flex-wrap gap-2 border-b border-border px-6 py-3">
-        @for (attachment of detail.attachments; track attachment.id) {
-          <button type="button" class="btn btn-outline btn-xs gap-1.5" (click)="downloadAttachment(attachment)">
-            <ng-icon name="lucidePaperclip" size="12" />
-            {{ attachment.filename || 'attachment' }}
-            <span class="text-ink/40">({{ formatSize(attachment.sizeBytes) }})</span>
-          </button>
-        }
-      </div>
-    }
 
     @if (detail.parseWarnings?.length) {
       <div class="flex flex-col gap-1.5 border-b border-border bg-warning/10 px-6 py-3">
@@ -99,9 +76,6 @@
             Text
           </button>
         }
-        <button type="button" role="tab" class="tab" [class.tab-active]="contentTab() === 'raw'" (click)="selectContentTab('raw')">
-          Raw
-        </button>
       </div>
 
       @if (contentTab() === 'html') {
@@ -163,21 +137,6 @@
           <pre
             class="h-full overflow-auto whitespace-pre-wrap rounded-xl border border-border bg-surface p-6 font-sans text-sm text-ink shadow-sm"
           >{{ detail.textBody }}</pre>
-        }
-        @case ('raw') {
-          @if (rawLoading()) {
-            <div class="rounded-xl border border-border bg-surface p-6 shadow-sm">
-              <app-skeleton [lines]="12" />
-            </div>
-          } @else if (rawError(); as message) {
-            <div class="rounded-xl border border-border bg-surface shadow-sm">
-              <app-error-state [message]="message" (retry)="loadRaw()" />
-            </div>
-          } @else if (rawContent(); as text) {
-            <pre
-              class="h-full overflow-auto whitespace-pre rounded-xl border border-border bg-surface p-6 font-mono text-xs text-ink shadow-sm"
-            >{{ text }}</pre>
-          }
         }
       }
     </div>

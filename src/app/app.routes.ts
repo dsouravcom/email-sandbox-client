@@ -66,6 +66,12 @@ export const routes: Routes = [
           import('./features/auth/verify-email/verify-email').then((m) => m.VerifyEmail),
       },
       {
+        path: 'login-verify',
+        title: 'Sign-in code · Email Sandbox',
+        loadComponent: () =>
+          import('./features/auth/login-verify/login-verify').then((m) => m.LoginVerify),
+      },
+      {
         path: 'forgot-password',
         title: 'Forgot password · Email Sandbox',
         loadComponent: () =>

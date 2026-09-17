@@ -1,8 +1,9 @@
 import { Component, inject, signal } from '@angular/core';
 import { email, form, FormField, FormRoot, required } from '@angular/forms/signals';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { firstValueFrom } from 'rxjs';
+import { AuthApi } from '../../../core/auth/auth-api';
 import { AuthErrorCode } from '../../../core/auth/auth-models';
-import { AuthStore } from '../../../core/auth/auth-store';
 import { getApiError, getApiErrorMessage } from '../../../core/http/api-error';
 import { FieldError } from '../../../shared/ui/field-error/field-error';
 
@@ -12,7 +13,7 @@ import { FieldError } from '../../../shared/ui/field-error/field-error';
   templateUrl: './login.html',
 })
 export class Login {
-  private readonly authStore = inject(AuthStore);
+  private readonly authApi = inject(AuthApi);
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
 
@@ -37,8 +38,12 @@ export class Login {
           const credentials = field().value();
 
           try {
-            await this.authStore.login(credentials);
-            await this.router.navigateByUrl(this.returnUrl());
+            // A correct password never signs you in by itself: the server emails a
+            // one-time code that /login-verify collects before a session starts.
+            const { message } = await firstValueFrom(this.authApi.login(credentials));
+            await this.router.navigate(['/login-verify'], {
+              state: { email: credentials.email, notice: message, returnUrl: this.returnUrl() },
+            });
           } catch (error) {
             if (getApiError(error)?.code === AuthErrorCode.EMAIL_NOT_VERIFIED) {
               await this.router.navigate(['/verify-email'], {

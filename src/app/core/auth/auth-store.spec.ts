@@ -19,10 +19,10 @@ const provisioning: ProvisioningResult = {
 
 describe('AuthStore', () => {
   let store: AuthStore;
-  let api: { verifyEmail: ReturnType<typeof vi.fn>; login: ReturnType<typeof vi.fn> };
+  let api: { verifyEmail: ReturnType<typeof vi.fn>; verifyLogin: ReturnType<typeof vi.fn> };
 
   beforeEach(() => {
-    api = { verifyEmail: vi.fn(), login: vi.fn() };
+    api = { verifyEmail: vi.fn(), verifyLogin: vi.fn() };
     TestBed.configureTestingModule({ providers: [{ provide: AuthApi, useValue: api }] });
     store = TestBed.inject(AuthStore);
   });
@@ -36,10 +36,10 @@ describe('AuthStore', () => {
     expect(store.consumeLastProvisioning()).toBeNull();
   });
 
-  it('never surfaces provisioning info from a plain login', async () => {
-    api.login.mockReturnValue(of(authResponse(null)));
+  it('never surfaces provisioning info from a plain sign-in', async () => {
+    api.verifyLogin.mockReturnValue(of(authResponse(null)));
 
-    await store.login({ email: 't@example.com', password: 'secret' });
+    await store.verifyLogin({ email: 't@example.com', code: '123456' });
 
     expect(store.consumeLastProvisioning()).toBeNull();
     expect(store.isAuthenticated()).toBe(true);

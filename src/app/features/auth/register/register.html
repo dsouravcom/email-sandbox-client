@@ -56,6 +56,11 @@
     <app-field-error [field]="registerForm.confirmPassword" />
   </div>
 
+  <div>
+    <app-turnstile [siteKey]="turnstileSiteKey" (verified)="onTurnstileVerified($event)" (expired)="onTurnstileExpired()" />
+    <app-field-error [field]="registerForm.turnstileToken" />
+  </div>
+
   @if (errorMessage(); as text) {
     <p class="alert alert-error" role="alert">{{ text }}</p>
   }

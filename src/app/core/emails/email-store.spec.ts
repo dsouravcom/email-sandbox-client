@@ -39,7 +39,7 @@ describe('EmailStore', () => {
 
     api = {
       list: vi.fn().mockReturnValue(of({ data: [summary()], nextCursor: 'cursor-1', hasMore: true })),
-      get: vi.fn().mockReturnValue(of({ ...summary(), cc: [], bcc: [], replyTo: [], envelopeFrom: null, envelopeRecipients: [], messageId: null, inReplyTo: null, references: null, textBody: 'body', htmlBody: null, htmlUrl: null, rawUrl: null, headers: {}, parseWarnings: null, attachments: [] } as EmailDetail)),
+      get: vi.fn().mockReturnValue(of({ ...summary(), cc: [], bcc: [], replyTo: [], envelopeFrom: null, envelopeRecipients: [], messageId: null, inReplyTo: null, references: null, textBody: 'body', htmlBody: null, htmlUrl: null, headers: {}, parseWarnings: null } as EmailDetail)),
       setRead: vi.fn().mockReturnValue(of(undefined)),
     };
 
