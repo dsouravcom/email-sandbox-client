@@ -3,26 +3,34 @@ import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 // Runs before every `npm start`/`npm run build`/`npm test` (see the pre*
-// hooks in package.json), turning .env's API_BASE_URL into a real TS
-// constant the app imports — see ../src/app/core/http/api-base-url.ts.
+// hooks in package.json), turning API_BASE_URL/TURNSTILE_SITE_KEY into real
+// TS constants the app imports — see ../src/app/core/http/api-base-url.ts.
+//
+// Locally and on a VPS, those come from client/.env (gitignored). On a host
+// like Netlify/Vercel/CI there is no .env file at all — the platform injects
+// the same variables straight into process.env instead — so a missing .env
+// file here is not itself an error; only actually-missing variables are.
 try {
   process.loadEnvFile();
 } catch {
-  console.error(
-    'client/.env not found. Copy client/.env.example to client/.env and fill in API_BASE_URL first.',
-  );
-  process.exit(1);
+  // No .env file: fine when the platform sets these directly (see above).
 }
 
 const apiBaseUrl = process.env.API_BASE_URL;
 if (!apiBaseUrl) {
-  console.error('API_BASE_URL is not set in client/.env.');
+  console.error(
+    'API_BASE_URL is not set. Set it in client/.env locally (copy client/.env.example), ' +
+      'or as an environment variable in your hosting platform/CI.',
+  );
   process.exit(1);
 }
 
 const turnstileSiteKey = process.env.TURNSTILE_SITE_KEY;
 if (!turnstileSiteKey) {
-  console.error('TURNSTILE_SITE_KEY is not set in client/.env.');
+  console.error(
+    'TURNSTILE_SITE_KEY is not set. Set it in client/.env locally (copy client/.env.example), ' +
+      'or as an environment variable in your hosting platform/CI.',
+  );
   process.exit(1);
 }
 
