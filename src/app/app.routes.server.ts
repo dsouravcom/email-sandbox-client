@@ -21,7 +21,7 @@ export const serverRoutes: ServerRoute[] = [
   ].map((path): ServerRoute => ({
     path,
     renderMode: RenderMode.Client,
-    headers: { 'X-Robots-Tag': 'noindex, nofollow' },
+    headers: { 'X-Robots-Tag': 'noindex, nofollow', 'Cache-Control': 'private, no-store' },
   })),
   {
     path: '**',

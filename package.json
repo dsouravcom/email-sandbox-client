@@ -11,8 +11,7 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "pretest": "npm run generate-config",
-    "test": "ng test",
-    "serve:ssr:client": "node dist/client/server/server.mjs"
+    "test": "ng test"
   },
   "private": true,
   "packageManager": "npm@12.0.2",
