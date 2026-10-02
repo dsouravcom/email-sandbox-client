@@ -7,10 +7,22 @@ export interface Organization {
   name: string;
   slug: string | null;
   isPersonal: boolean;
-  plan: 'free' | 'pro' | 'enterprise';
-  retentionDays: number;
+  plan: 'free' | 'basic' | 'pro' | 'team' | 'business';
+  billingPeriod: 'monthly' | 'yearly' | null;
+  planStartedAt: string | null;
+  planExpiresAt: string | null;
+  monthlyUsage: number;
+  mailboxCount: number;
+  teamMemberCount: number;
+  usageResetsAt: string;
+  limits: {
+    emailsPerSecond: number; emailsPerMonth: number;
+    maxMailboxes: number; maxTeamMembers: number;
+    maxEmailSizeMb: number; retentionDays: number | null;
+  };
+  retentionDays: number | null;
   maxMailboxes: number;
-  maxMessagesPerMailbox: number;
+  maxMessagesPerMailbox: null;
   /** The signed-in user's own role in this organization. */
   role: OrganizationRole;
   createdAt: string;
@@ -19,7 +31,6 @@ export interface Organization {
 /** `PATCH /organizations/:id` body — at least one field is required. */
 export interface UpdateOrganizationRequest {
   name?: string;
-  retentionDays?: number;
 }
 
 /** Error codes the API uses for cases the UI handles specially. */

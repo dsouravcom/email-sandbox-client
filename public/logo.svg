@@ -1,0 +1,41 @@
+<svg width="200" height="40" viewBox="0 0 200 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="es-full-top-flap" x1="6" y1="5" x2="30" y2="17" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#f59e0b" />
+      <stop offset="100%" stop-color="#b45309" />
+    </linearGradient>
+    <linearGradient id="es-full-left-facet" x1="4" y1="12" x2="18" y2="31" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#1e293b" />
+      <stop offset="100%" stop-color="#0f172a" />
+    </linearGradient>
+    <linearGradient id="es-full-right-facet" x1="18" y1="17" x2="32" y2="31" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#334155" />
+      <stop offset="100%" stop-color="#1e293b" />
+    </linearGradient>
+    <radialGradient id="es-full-amber-core" cx="18" cy="19" r="6" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#f59e0b" stop-opacity="1" />
+      <stop offset="70%" stop-color="#d97706" stop-opacity="0.4" />
+      <stop offset="100%" stop-color="#b45309" stop-opacity="0" />
+    </radialGradient>
+  </defs>
+
+  <!-- Group: Icon Mark (offset 4, 2) -->
+  <g transform="translate(4, 2)">
+    <path d="M5 11.5L18 19V32L5 24.5V11.5Z" fill="url(#es-full-left-facet)" stroke="#475569" stroke-width="1.2" stroke-linejoin="round" />
+    <path d="M18 19L31 11.5V24.5L18 32V19Z" fill="url(#es-full-right-facet)" stroke="#475569" stroke-width="1.2" stroke-linejoin="round" />
+    <path d="M18 4L31 11.5L18 19L5 11.5L18 4Z" fill="url(#es-full-top-flap)" stroke="#d97706" stroke-width="1.2" stroke-linejoin="round" />
+    <path d="M5 11.5L18 19L31 11.5" stroke="#94a3b8" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" />
+    <circle cx="18" cy="19" r="4.5" fill="url(#es-full-amber-core)" />
+    <circle cx="18" cy="19" r="1.8" fill="#f59e0b" />
+    <line x1="18" y1="19" x2="18" y2="32" stroke="#475569" stroke-width="1.2" stroke-linecap="round" />
+  </g>
+
+  <!-- Wordmark Text -->
+  <text x="48" y="26" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="18" font-weight="800" letter-spacing="-0.5" fill="#0f172a">
+    Email<tspan fill="#b45309" font-weight="600">Sandbox</tspan>
+  </text>
+
+  <!-- Tag Pill -->
+  <rect x="166" y="14" width="28" height="15" rx="4" fill="#fef3c7" stroke="#fde68a" stroke-width="1" />
+  <text x="171" y="25" font-family="ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace" font-size="9" font-weight="700" fill="#92400e">DEV</text>
+</svg>

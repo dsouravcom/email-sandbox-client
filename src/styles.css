@@ -121,7 +121,7 @@ app-root, app-shell, app-organization-switcher, app-profile-menu, app-theme-swit
 app-auth-layout, app-login, app-register, app-verify-email, app-forgot-password, app-reset-password,
 app-mailbox-list, app-mailbox-card, app-create-mailbox-dialog, app-mailbox-workspace,
 app-email-list, app-email-list-item, app-email-preview, app-smtp-credentials-panel,
-app-organization-settings, app-profile,
+app-organization-settings, app-profile, app-landing-page, app-logo,
 app-field-error, app-empty-state, app-skeleton, app-error-state, app-confirm-dialog,
 app-copy-button, app-toast-container, app-safe-email-html {
   display: contents;
@@ -145,6 +145,35 @@ app-copy-button, app-toast-container, app-safe-email-html {
   }
   .form-input {
     @apply block w-full rounded-field border border-border bg-surface px-3 py-2 text-ink shadow-xs placeholder:text-ink/40 focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none aria-invalid:border-error aria-invalid:focus:ring-error/20;
+  }
+  .bg-grid-subtle {
+    background-size: 32px 32px;
+    background-image: 
+      linear-gradient(to right, color-mix(in oklch, var(--color-base-content) 4%, transparent) 1px, transparent 1px),
+      linear-gradient(to bottom, color-mix(in oklch, var(--color-base-content) 4%, transparent) 1px, transparent 1px);
+  }
+  .bg-radial-hero {
+    background: radial-gradient(circle at 50% 0%, color-mix(in oklch, var(--color-primary) 14%, transparent) 0%, transparent 65%);
+  }
+  .specular-card {
+    position: relative;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    box-shadow: 
+      0 1px 2px rgba(0, 0, 0, 0.04),
+      0 4px 12px rgba(0, 0, 0, 0.03),
+      inset 0 1px 0 color-mix(in oklch, var(--color-base-content) 7%, transparent);
+  }
+  .specular-highlight {
+    position: relative;
+    border: 1px solid color-mix(in oklch, var(--color-primary) 35%, var(--color-border));
+    box-shadow: 
+      0 0 0 1px color-mix(in oklch, var(--color-primary) 20%, transparent),
+      0 8px 30px -4px color-mix(in oklch, var(--color-primary) 12%, transparent),
+      inset 0 1px 0 color-mix(in oklch, var(--color-primary) 40%, transparent);
+  }
+  .kbd-chip {
+    @apply inline-flex items-center justify-center rounded px-1.5 py-0.5 font-mono text-[10px] font-semibold tracking-wider text-ink/60 bg-surface-sunken border border-border shadow-2xs;
   }
 }
 

@@ -6,10 +6,16 @@ import { guestGuard } from './core/auth/guest-guard';
 export const routes: Routes = [
   {
     path: '',
+    pathMatch: 'full',
+    title: 'Email Sandbox · Developer Email Testing & QA Platform',
+    loadComponent: () =>
+      import('./features/landing/landing-page/landing-page').then((m) => m.LandingPage),
+  },
+  {
+    path: '',
     canActivate: [authGuard],
     loadComponent: () => import('./layout/app-shell/app-shell').then((m) => m.AppShell),
     children: [
-      { path: '', pathMatch: 'full', redirectTo: 'mailboxes' },
       {
         path: 'mailboxes',
         title: 'Mailboxes · Email Sandbox',

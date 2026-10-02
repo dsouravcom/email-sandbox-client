@@ -1,0 +1,852 @@
+<div class="min-h-screen bg-surface text-ink flex flex-col selection:bg-primary/20 selection:text-primary relative font-sans">
+  <!-- ========================================================================= -->
+  <!-- 1. NAVBAR (NO v1.0 BADGE) -->
+  <!-- ========================================================================= -->
+  <header class="sticky top-0 z-50 w-full border-b border-border/80 bg-surface/85 backdrop-blur-md transition-colors">
+    <div class="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
+      <!-- Bespoke SVG Logo & Brand Name -->
+      <a routerLink="/" class="group flex items-center">
+        <app-logo [size]="32" [showWordmark]="true" [showBadge]="false" textClass="text-lg sm:text-xl font-bold tracking-tight text-ink" />
+      </a>
+
+      <!-- Navigation Links -->
+      <nav class="hidden md:flex items-center gap-7 text-xs font-semibold uppercase tracking-wider text-ink/65">
+        <a href="#demo" class="hover:text-primary transition-colors">Interactive Demo</a>
+        <a href="#features" class="hover:text-primary transition-colors">Features</a>
+        <a href="#comparison" class="hover:text-primary transition-colors">Comparison</a>
+        <a href="#pricing" class="hover:text-primary transition-colors">Pricing</a>
+        <a href="#faq" class="hover:text-primary transition-colors">FAQ</a>
+      </nav>
+
+      <!-- Right Actions: Theme Toggle & Sign in / Register -->
+      <div class="flex items-center gap-3">
+        <app-theme-switcher />
+
+        @if (auth.isAuthenticated()) {
+          <a
+            routerLink="/mailboxes"
+            class="btn btn-primary btn-sm gap-2 shadow-xs font-semibold specular-highlight"
+          >
+            <ng-icon name="lucideInbox" size="15" />
+            <span>My Mailboxes</span>
+            <ng-icon name="lucideArrowRight" size="14" />
+          </a>
+        } @else {
+          <a
+            routerLink="/login"
+            class="btn btn-ghost btn-sm text-xs font-semibold tracking-wide text-ink/80 hover:text-ink hidden sm:inline-flex"
+          >
+            Sign in
+          </a>
+          <a
+            routerLink="/register"
+            class="btn btn-primary btn-sm gap-2 shadow-xs font-semibold specular-highlight"
+          >
+            <span>Start for Free</span>
+            <ng-icon name="lucideArrowRight" size="14" />
+          </a>
+        }
+      </div>
+    </div>
+  </header>
+
+  <!-- ========================================================================= -->
+  <!-- 2. REDESIGNED HERO SECTION WITH CODE BOX ON THE RIGHT -->
+  <!-- ========================================================================= -->
+  <section class="relative overflow-hidden pt-12 pb-16 md:pt-20 md:pb-24 bg-radial-hero bg-grid-subtle border-b border-border/60">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative z-10">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-center">
+        <!-- Left Column: Value Proposition & CTAs -->
+        <div class="lg:col-span-7 text-left">
+          <!-- User-Friendly Tag -->
+          <div class="inline-flex items-center gap-2 rounded-full border border-primary/25 bg-surface-raised/90 px-3.5 py-1 text-xs font-medium text-ink/80 shadow-2xs mb-6 backdrop-blur-sm">
+            <span class="h-2 w-2 rounded-full bg-success"></span>
+            <span>Safe Email Testing for Developers & Teams</span>
+            <span class="text-ink/30">•</span>
+            <span class="text-primary font-semibold">Zero Real Inboxes Emailed</span>
+          </div>
+
+          <!-- Main Headline -->
+          <h1 class="text-3xl font-extrabold tracking-tight sm:text-5xl text-ink leading-[1.15]">
+            Test transactional emails <br class="hidden sm:inline" />
+            <span class="text-primary">
+              without spamming real customers.
+            </span>
+          </h1>
+
+          <!-- User-Centered Description -->
+          <p class="mt-5 text-base sm:text-lg text-ink/70 leading-relaxed max-w-2xl">
+            Capture all outgoing emails from your development and staging apps before they reach real users. Inspect how emails render on mobile and desktop, check confirmation links and verification codes, and catch layout issues with confidence.
+          </p>
+
+          <!-- Action Buttons -->
+          <div class="mt-8 flex flex-col sm:flex-row items-stretch sm:items-center gap-3.5">
+            @if (auth.isAuthenticated()) {
+              <a
+                routerLink="/mailboxes"
+                class="btn btn-primary btn-md px-8 gap-2 shadow-sm font-semibold text-base specular-highlight"
+              >
+                <ng-icon name="lucideInbox" size="18" />
+                Go to Mailboxes
+              </a>
+            } @else {
+              <a
+                routerLink="/register"
+                class="btn btn-primary btn-md px-8 gap-2 shadow-sm font-semibold text-base specular-highlight"
+              >
+                Start Testing for Free
+                <ng-icon name="lucideArrowRight" size="18" />
+              </a>
+            }
+            <a
+              href="#demo"
+              class="btn btn-outline btn-md px-6 gap-2 text-ink hover:bg-surface-raised font-medium text-base border-border"
+            >
+              <ng-icon name="lucidePlay" size="16" class="text-primary" />
+              View Live Demo
+            </a>
+          </div>
+
+          <!-- Quick Trust Note -->
+          <p class="mt-5 text-xs text-ink/50 flex items-center gap-2">
+            <ng-icon name="lucideCheck" class="text-success" size="15" />
+            Free tier with generous limits &bull; No credit card required &bull; Ready in 30 seconds
+          </p>
+        </div>
+
+        <!-- Right Column: Small Compact Code Box with Language Tabs -->
+        <div class="lg:col-span-5">
+          <div class="rounded-2xl border border-border bg-surface-raised shadow-xl overflow-hidden specular-card">
+            <!-- Language Tabs Bar -->
+            <div class="flex items-center justify-between border-b border-border bg-surface px-4 py-2.5">
+              <div role="tablist" class="flex flex-wrap items-center gap-1">
+                <button
+                  type="button"
+                  role="tab"
+                  (click)="heroCodeTab.set('node')"
+                  class="rounded-md px-2.5 py-1 text-xs font-semibold transition-colors"
+                  [class]="heroCodeTab() === 'node' ? 'bg-primary text-primary-content shadow-xs' : 'text-ink/65 hover:bg-surface-raised hover:text-ink'"
+                >
+                  Node.js
+                </button>
+                <button
+                  type="button"
+                  role="tab"
+                  (click)="heroCodeTab.set('curl')"
+                  class="rounded-md px-2.5 py-1 text-xs font-semibold transition-colors"
+                  [class]="heroCodeTab() === 'curl' ? 'bg-primary text-primary-content shadow-xs' : 'text-ink/65 hover:bg-surface-raised hover:text-ink'"
+                >
+                  cURL
+                </button>
+                <button
+                  type="button"
+                  role="tab"
+                  (click)="heroCodeTab.set('python')"
+                  class="rounded-md px-2.5 py-1 text-xs font-semibold transition-colors"
+                  [class]="heroCodeTab() === 'python' ? 'bg-primary text-primary-content shadow-xs' : 'text-ink/65 hover:bg-surface-raised hover:text-ink'"
+                >
+                  Python
+                </button>
+                <button
+                  type="button"
+                  role="tab"
+                  (click)="heroCodeTab.set('java')"
+                  class="rounded-md px-2.5 py-1 text-xs font-semibold transition-colors"
+                  [class]="heroCodeTab() === 'java' ? 'bg-primary text-primary-content shadow-xs' : 'text-ink/65 hover:bg-surface-raised hover:text-ink'"
+                >
+                  Java
+                </button>
+                <button
+                  type="button"
+                  role="tab"
+                  (click)="heroCodeTab.set('go')"
+                  class="rounded-md px-2.5 py-1 text-xs font-semibold transition-colors"
+                  [class]="heroCodeTab() === 'go' ? 'bg-primary text-primary-content shadow-xs' : 'text-ink/65 hover:bg-surface-raised hover:text-ink'"
+                >
+                  Go
+                </button>
+                <button
+                  type="button"
+                  role="tab"
+                  (click)="heroCodeTab.set('php')"
+                  class="rounded-md px-2.5 py-1 text-xs font-semibold transition-colors"
+                  [class]="heroCodeTab() === 'php' ? 'bg-primary text-primary-content shadow-xs' : 'text-ink/65 hover:bg-surface-raised hover:text-ink'"
+                >
+                  PHP
+                </button>
+              </div>
+              <app-copy-button [value]="activeHeroSnippet().code" label="credentials snippet" />
+            </div>
+
+            <!-- Code Content Box -->
+            <div class="p-5 bg-surface-sunken overflow-x-auto">
+              <pre class="font-mono text-xs text-ink/90 leading-relaxed"><code>{{ activeHeroSnippet().code }}</code></pre>
+            </div>
+
+            <!-- Bottom Connection Info Strip -->
+            <div class="border-t border-border bg-surface px-4 py-2.5 flex items-center justify-between text-xs text-ink/60 font-mono">
+              <span>Port: <strong class="text-ink">2525</strong></span>
+              <span class="flex items-center gap-1.5 text-success font-medium">
+                <span class="h-2 w-2 rounded-full bg-success"></span>
+                Ready to accept test mail
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================================= -->
+  <!-- 3. INTERACTIVE SIMULATOR — FICTIONAL SAMPLE DATA -->
+  <!-- ========================================================================= -->
+  <section id="demo" class="py-16 md:py-24 bg-surface">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <!-- Section Header -->
+      <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10 pb-6 border-b border-border/80">
+        <div>
+          <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-ink">
+            See how your test emails look and work
+          </h2>
+          <p class="mt-2 text-sm text-ink/70 max-w-xl">
+            Click on emails in the list to preview them, switch between Desktop, Tablet, and Mobile views, or add a fictional Acme email to this demo inbox.
+          </p>
+        </div>
+
+        <div class="flex items-center gap-3">
+          <button
+            type="button"
+            (click)="simulateSend()"
+            [disabled]="isSimulating()"
+            class="btn btn-primary btn-sm gap-2 shadow-xs font-semibold specular-highlight"
+            title="Simulate receiving a new email into this sandbox"
+          >
+            <ng-icon name="lucideZap" size="14" [class.animate-spin]="isSimulating()" />
+            <span>{{ isSimulating() ? 'Sending…' : 'Simulate New Email' }}</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Ingestion Toast Feedback -->
+      @if (simulatedStatus(); as status) {
+        <div class="mb-4 flex items-center justify-between gap-3 rounded-xl border border-success/30 bg-success/15 px-4 py-2.5 text-xs text-success font-medium animate-fade-in">
+          <div class="flex items-center gap-2">
+            <ng-icon name="lucideCheckCircle2" size="16" />
+            <span>{{ status }}</span>
+          </div>
+          <span class="text-[11px] opacity-75">Local demo · no email is sent</span>
+        </div>
+      }
+
+      <!-- Simulator Window (Matching Screenshot Layout) -->
+      <div class="rounded-2xl border border-border bg-[#141211] text-[#f5f5f4] shadow-2xl overflow-hidden ring-1 ring-border/50">
+        <!-- Top Breadcrumb Bar from Screenshot -->
+        <div class="flex items-center justify-between border-b border-[#292524] bg-[#1c1917] px-4 py-3 sm:px-6 text-xs text-[#a8a29e]">
+          <div class="flex items-center gap-2 truncate">
+            <span class="font-semibold text-white flex items-center gap-1 cursor-pointer">
+              Acme <span class="text-[10px]">⌵</span>
+            </span>
+            <span class="text-[#57534e]">|</span>
+            <span class="text-[#a8a29e] hidden sm:inline">Mailbox</span>
+            <span class="text-[#57534e] hidden sm:inline">/</span>
+            <span class="text-[#a8a29e] hidden sm:inline">Staging Inbox</span>
+            <span class="text-[#57534e] hidden sm:inline">/</span>
+            <span class="text-[#a8a29e]">Email</span>
+            <span class="text-[#57534e]">/</span>
+            <span class="text-white font-medium truncate">{{ selectedEmail().subject }}</span>
+          </div>
+
+          <div class="flex items-center gap-2 shrink-0">
+            <button
+              type="button"
+              class="rounded-md border border-[#44403c] bg-[#292524] px-3 py-1 text-xs font-medium text-white hover:bg-[#322e2b] transition-colors"
+            >
+              Credentials
+            </button>
+          </div>
+        </div>
+
+        <!-- Simulator Body: Left List + Right Preview -->
+        <div class="grid grid-cols-1 lg:grid-cols-[320px_1fr] min-h-[580px]">
+          <!-- Left Column: Email List (No Filters) -->
+          <div class="border-b lg:border-b-0 lg:border-r border-[#292524] bg-[#141211] flex flex-col">
+            <!-- Search Input from Screenshot -->
+            <div class="p-3 border-b border-[#292524]">
+              <div class="relative">
+                <input
+                  type="text"
+                  placeholder="Search this list"
+                  class="w-full rounded-md border border-[#292524] bg-[#1c1917] px-8 py-1.5 text-xs text-white placeholder:text-[#78716c] focus:border-primary focus:outline-none"
+                  readonly
+                />
+                <ng-icon name="lucideSearch" size="14" class="absolute left-2.5 top-2 text-[#78716c]" />
+              </div>
+            </div>
+
+            <!-- Email Rows -->
+            <div class="divide-y divide-[#292524] overflow-y-auto">
+              @for (item of emails(); track item.id) {
+                <div
+                  role="button"
+                  tabindex="0"
+                  (click)="selectEmail(item.id)"
+                  (keydown.enter)="selectEmail(item.id)"
+                  [class.bg-[#1c1917]]="selectedEmailId() === item.id"
+                  [class.border-l-2]="selectedEmailId() === item.id"
+                  [class.border-l-primary]="selectedEmailId() === item.id"
+                  class="p-4 cursor-pointer text-left transition-colors hover:bg-[#1c1917]/80 focus:outline-none"
+                >
+                  <div class="flex items-center justify-between text-xs text-[#a8a29e] mb-1">
+                    <span class="font-medium text-white">{{ item.sender }}</span>
+                    <span class="text-[11px] text-[#78716c]">{{ item.dateStr }}</span>
+                  </div>
+                  <div class="text-xs font-semibold text-white truncate mb-1">
+                    {{ item.subject }}
+                  </div>
+                  <div class="text-[11px] text-[#78716c] truncate">
+                    {{ item.snippet }}
+                  </div>
+                </div>
+              }
+            </div>
+          </div>
+
+          <!-- Right Column: Email Preview (Matches Screenshot) -->
+          <div class="flex flex-col bg-[#141211] overflow-hidden">
+            <!-- Preview Top Info Header -->
+            <div class="border-b border-[#292524] p-5 sm:px-6">
+              <div class="flex items-start justify-between gap-4">
+                <div class="min-w-0 flex-1">
+                  <h3 class="text-base sm:text-lg font-bold text-white truncate">{{ selectedEmail().subject }}</h3>
+                  <div class="mt-2 space-y-1 text-xs text-[#a8a29e]">
+                    <div><span class="font-semibold text-white">From:</span> {{ selectedEmail().from }}</div>
+                    <div><span class="font-semibold text-white">To:</span> {{ selectedEmail().to }}</div>
+                  </div>
+                </div>
+
+                <div class="flex items-center gap-3 shrink-0">
+                  <span class="text-xs text-[#78716c] hidden sm:inline">{{ selectedEmail().fullDateStr }}</span>
+                  <div class="flex items-center gap-1 text-[#a8a29e]">
+                    <button type="button" class="btn btn-ghost btn-xs btn-square text-[#a8a29e] hover:text-white" title="Mark Read">
+                      <ng-icon name="lucideMail" size="16" />
+                    </button>
+                    <button type="button" class="btn btn-ghost btn-xs btn-square text-error/80 hover:text-error" title="Delete">
+                      <ng-icon name="lucideTrash2" size="16" />
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- View Switchers Bar: HTML / Text on Left, Device Modes on Right -->
+              <div class="mt-5 flex items-center justify-between border-t border-[#292524] pt-3">
+                <!-- HTML / Text Tabs -->
+                <div role="tablist" class="flex items-center gap-2 text-xs font-semibold">
+                  <button
+                    type="button"
+                    role="tab"
+                    (click)="contentTab.set('html')"
+                    class="px-2 py-1 rounded transition-colors"
+                    [class.text-white]="contentTab() === 'html'"
+                    [class.border-b-2]="contentTab() === 'html'"
+                    [class.border-b-primary]="contentTab() === 'html'"
+                    [class.text-[#78716c]]="contentTab() !== 'html'"
+                  >
+                    HTML
+                  </button>
+                  <button
+                    type="button"
+                    role="tab"
+                    (click)="contentTab.set('text')"
+                    class="px-2 py-1 rounded transition-colors"
+                    [class.text-white]="contentTab() === 'text'"
+                    [class.border-b-2]="contentTab() === 'text'"
+                    [class.border-b-primary]="contentTab() === 'text'"
+                    [class.text-[#78716c]]="contentTab() !== 'text'"
+                  >
+                    Text
+                  </button>
+                </div>
+
+                <!-- Device Preview Switcher (Desktop, Tablet, Mobile) -->
+                @if (contentTab() === 'html') {
+                  <div class="flex items-center gap-1 text-[#a8a29e]">
+                    <button
+                      type="button"
+                      (click)="deviceMode.set('desktop')"
+                      class="btn btn-ghost btn-xs btn-square hover:text-white"
+                      [class.text-primary]="deviceMode() === 'desktop'"
+                      title="Desktop view"
+                      aria-label="Desktop preview"
+                    >
+                      <ng-icon name="lucideMonitor" size="16" />
+                    </button>
+                    <button
+                      type="button"
+                      (click)="deviceMode.set('tablet')"
+                      class="btn btn-ghost btn-xs btn-square hover:text-white"
+                      [class.text-primary]="deviceMode() === 'tablet'"
+                      title="Tablet view"
+                      aria-label="Tablet preview"
+                    >
+                      <ng-icon name="lucideTablet" size="16" />
+                    </button>
+                    <button
+                      type="button"
+                      (click)="deviceMode.set('mobile')"
+                      class="btn btn-ghost btn-xs btn-square hover:text-white"
+                      [class.text-primary]="deviceMode() === 'mobile'"
+                      title="Mobile view"
+                      aria-label="Mobile preview"
+                    >
+                      <ng-icon name="lucideSmartphone" size="16" />
+                    </button>
+                  </div>
+                }
+              </div>
+            </div>
+
+            <!-- Email Body Viewport Container -->
+            <div class="flex-1 overflow-y-auto p-4 sm:p-8 bg-[#1f1d1b] flex flex-col justify-start">
+              @if (contentTab() === 'html') {
+                <div class="w-full transition-all duration-300" [class]="deviceFrameClass()">
+                  <div class="bg-white rounded-xl shadow-lg overflow-hidden border border-[#e5e7eb]">
+                    <div [innerHTML]="safeHtmlContent()"></div>
+                  </div>
+                </div>
+              } @else {
+                <div class="w-full rounded-xl border border-[#292524] bg-[#141211] p-6 font-mono text-xs text-[#e7e5e4] leading-relaxed whitespace-pre-wrap">
+                  {{ selectedEmail().textBody }}
+                </div>
+              }
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================================= -->
+  <!-- 4. KEY USER BENEFITS (NO TECHNICAL JARGON) -->
+  <!-- ========================================================================= -->
+  <section id="features" class="py-16 md:py-24 bg-surface-raised/30 border-y border-border/60">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div class="max-w-3xl mb-14">
+        <h2 class="text-3xl font-extrabold tracking-tight text-ink sm:text-4xl">
+          Everything you need for effortless email testing
+        </h2>
+        <p class="mt-3 text-base text-ink/70">
+          Built to make testing emails as fast, safe, and simple as possible for developers and product teams.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <!-- Benefit 1 -->
+        <div class="rounded-2xl border border-border bg-surface p-7 specular-card">
+          <div class="h-10 w-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center mb-5">
+            <ng-icon name="lucideShieldCheck" size="20" />
+          </div>
+          <h3 class="text-lg font-bold text-ink mb-2">Zero Customer Email Risk</h3>
+          <p class="text-sm text-ink/70 leading-relaxed">
+            Test with real database dumps, sign-up flows, and user lists without worrying about emails escaping. Outgoing delivery is completely disabled.
+          </p>
+        </div>
+
+        <!-- Benefit 2 -->
+        <div class="rounded-2xl border border-border bg-surface p-7 specular-card">
+          <div class="h-10 w-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center mb-5">
+            <ng-icon name="lucideSmartphone" size="20" />
+          </div>
+          <h3 class="text-lg font-bold text-ink mb-2">Multi-Device Preview</h3>
+          <p class="text-sm text-ink/70 leading-relaxed">
+            Check how your buttons, images, and tables look on desktop, tablet, and mobile screens before you push your templates to production.
+          </p>
+        </div>
+
+        <!-- Benefit 3 -->
+        <div class="rounded-2xl border border-border bg-surface p-7 specular-card">
+          <div class="h-10 w-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center mb-5">
+            <ng-icon name="lucideZap" size="20" />
+          </div>
+          <h3 class="text-lg font-bold text-ink mb-2">Real-Time Ingestion</h3>
+          <p class="text-sm text-ink/70 leading-relaxed">
+            Emails appear in your inbox immediately when your app triggers them. No refreshing the page or waiting for slow external webhooks.
+          </p>
+        </div>
+
+        <!-- Benefit 4 -->
+        <div class="rounded-2xl border border-border bg-surface p-7 specular-card">
+          <div class="h-10 w-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center mb-5">
+            <ng-icon name="lucideInbox" size="20" />
+          </div>
+          <h3 class="text-lg font-bold text-ink mb-2">Dedicated Mailboxes</h3>
+          <p class="text-sm text-ink/70 leading-relaxed">
+            Organize separate mailboxes for local development, staging environments, preview branches, and team members.
+          </p>
+        </div>
+
+        <!-- Benefit 5 -->
+        <div class="rounded-2xl border border-border bg-surface p-7 specular-card">
+          <div class="h-10 w-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center mb-5">
+            <ng-icon name="lucideEye" size="20" />
+          </div>
+          <h3 class="text-lg font-bold text-ink mb-2">HTML & Plain Text Views</h3>
+          <p class="text-sm text-ink/70 leading-relaxed">
+            Switch between rendered HTML and plaintext versions with one click to ensure your fallback text is readable on all email clients.
+          </p>
+        </div>
+
+        <!-- Benefit 6 -->
+        <div class="rounded-2xl border border-border bg-surface p-7 specular-card">
+          <div class="h-10 w-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center mb-5">
+            <ng-icon name="lucideClock" size="20" />
+          </div>
+          <h3 class="text-lg font-bold text-ink mb-2">Automated Cleanup</h3>
+          <p class="text-sm text-ink/70 leading-relaxed">
+            Old test messages are automatically cleaned up on a schedule so your inbox remains fast, lightweight, and clutter-free.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================================= -->
+  <!-- 5. HONEST COMPARISON & ALTERNATIVES (POINT 8) -->
+  <!-- ========================================================================= -->
+  <section id="comparison" class="py-16 md:py-24 bg-surface">
+    <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+      <div class="grid gap-8 lg:grid-cols-[1fr_1.15fr] lg:items-center">
+        <div class="max-w-lg">
+          <p class="text-xs font-semibold uppercase tracking-[0.18em] text-primary">Free tier comparison</p>
+          <h2 class="mt-4 text-3xl font-extrabold tracking-tight text-ink sm:text-4xl">More room to test.<br />The same familiar SMTP.</h2>
+          <p class="mt-5 text-sm leading-7 text-ink/65">Compare the essentials before you connect your app: how many emails you can capture, how often you can send them, and how many inboxes you can use.</p>
+          <a href="#demo" class="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-primary hover:underline">Try the interactive demo <ng-icon name="lucideArrowRight" size="16" /></a>
+        </div>
+        <div class="overflow-hidden rounded-2xl border border-border bg-surface-raised/40">
+          <table class="w-full table-fixed text-left text-sm">
+            <caption class="sr-only">Email Sandbox Free compared with another free-tier allowance</caption>
+            <thead>
+              <tr class="border-b border-border">
+                <th scope="col" class="w-[34%] px-4 py-5 text-xs font-medium text-ink/50 sm:px-6">Free plan limits</th>
+                <th scope="col" class="bg-primary/5 px-3 py-5 font-semibold text-primary">Email Sandbox</th>
+                <th scope="col" class="px-3 py-5 text-xs font-medium text-ink/60">Other free tier</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-border">
+              <tr>
+                <th scope="row" class="px-4 py-5 font-medium text-ink/70 sm:px-6">Emails / month</th>
+                <td class="bg-primary/5 px-3 py-5 text-lg font-semibold tabular-nums text-ink">{{ plans[0].limits.emailsPerMonth | number }}</td>
+                <td class="px-3 py-5 text-ink/60">50</td>
+              </tr>
+              <tr>
+                <th scope="row" class="px-4 py-5 font-medium text-ink/70 sm:px-6">Sending rate</th>
+                <td class="bg-primary/5 px-3 py-5 font-semibold text-ink">{{ plans[0].limits.emailsPerSecond }} email / second</td>
+                <td class="px-3 py-5 text-ink/60">1 email / 10 seconds</td>
+              </tr>
+              <tr>
+                <th scope="row" class="px-4 py-5 font-medium text-ink/70 sm:px-6">Inboxes</th>
+                <td class="bg-primary/5 px-3 py-5 text-lg font-semibold tabular-nums text-ink">{{ plans[0].limits.maxMailboxes }}</td>
+                <td class="px-3 py-5 text-ink/60">1</td>
+              </tr>
+            </tbody>
+          </table>
+          <p class="border-t border-border px-4 py-4 text-xs leading-5 text-ink/50 sm:px-6">This compares a free-tier allowance of 50 emails, one inbox, and one email every 10 seconds. Limits vary by provider and plan.</p>
+        </div>
+      </div>
+      <div class="mt-12 grid gap-6 border-t border-border pt-8 sm:grid-cols-3">
+        <div>
+          <p class="text-sm font-semibold text-ink">Straightforward setup</p>
+          <p class="mt-2 text-sm leading-6 text-ink/60">Copy your inbox's SMTP credentials into your app's existing mail configuration.</p>
+        </div>
+        <div>
+          <p class="text-sm font-semibold text-ink">Inspect your messages</p>
+          <p class="mt-2 text-sm leading-6 text-ink/60">Read HTML and plain text, check sender and recipient details, and preview at desktop, tablet, and mobile widths.</p>
+        </div>
+        <div>
+          <p class="text-sm font-semibold text-ink">Follow incoming mail</p>
+          <p class="mt-2 text-sm leading-6 text-ink/60">New messages appear in your inbox through live updates while you're connected.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================================= -->
+  <!-- 6. PLANS: FREE REGISTRATION, OTHER PLANS COMING SOON -->
+  <!-- ========================================================================= -->
+  <section id="pricing" class="border-y border-border bg-surface-raised/40 py-16 md:py-24">
+    <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+      <div class="flex flex-col justify-between gap-5 sm:flex-row sm:items-end">
+        <div>
+          <p class="text-xs font-semibold uppercase tracking-[0.18em] text-primary">Plans & limits</p>
+          <h2 class="mt-4 text-3xl font-extrabold tracking-tight text-ink sm:text-4xl">Start small. Leave room to grow.</h2>
+        </div>
+        <p class="max-w-sm text-sm leading-6 text-ink/60">Free is ready today. Higher-capacity plans are coming soon; upgrades are not available yet.</p>
+      </div>
+
+      @let freePlan = plans[0];
+      <article class="relative mt-10 overflow-hidden rounded-2xl border border-primary/35 bg-surface shadow-xs">
+        <div class="absolute inset-y-0 left-0 w-1 bg-primary"></div>
+        <div class="grid lg:grid-cols-[0.85fr_1.4fr]">
+          <div class="border-b border-border bg-primary/5 p-7 sm:p-9 lg:border-b-0 lg:border-r">
+            <div class="flex items-center gap-3">
+              <h3 class="text-xl font-bold text-ink">Free</h3>
+              <span class="rounded-full border border-primary/25 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-primary">Available now</span>
+            </div>
+            <div class="mt-5 flex items-baseline gap-2"><span class="text-5xl font-extrabold tracking-tight text-ink">$0</span><span class="text-sm text-ink/55">free forever</span></div>
+            <p class="mt-4 max-w-xs text-sm leading-6 text-ink/65">A place to test your app's emails before they reach customers.</p>
+            <a routerLink="/register" class="btn btn-primary mt-6 gap-2">Create a Free account <ng-icon name="lucideArrowRight" size="16" /></a>
+            <p class="mt-3 text-xs text-ink/50">No credit card required.</p>
+          </div>
+          <div class="p-7 sm:p-9">
+            <p class="text-xs font-semibold uppercase tracking-wider text-ink/45">Your free allowance</p>
+            <dl class="mt-6 grid grid-cols-2 gap-x-6 gap-y-7 sm:grid-cols-3">
+              <div class="flex flex-col"><dt class="mt-1 text-xs text-ink/55 order-last">emails / month</dt><dd class="text-2xl font-bold tabular-nums text-ink">{{ freePlan.limits.emailsPerMonth | number }}</dd></div>
+              <div class="flex flex-col"><dt class="mt-1 text-xs text-ink/55 order-last">sending rate</dt><dd class="text-2xl font-bold tabular-nums text-ink">{{ freePlan.limits.emailsPerSecond }}<span class="text-sm font-medium text-ink/55"> / sec</span></dd></div>
+              <div class="flex flex-col"><dt class="mt-1 text-xs text-ink/55 order-last">inbox</dt><dd class="text-2xl font-bold tabular-nums text-ink">{{ freePlan.limits.maxMailboxes }}</dd></div>
+              <div class="flex flex-col"><dt class="mt-1 text-xs text-ink/55 order-last">team member</dt><dd class="text-2xl font-bold tabular-nums text-ink">{{ freePlan.limits.maxTeamMembers }}</dd></div>
+              <div class="flex flex-col"><dt class="mt-1 text-xs text-ink/55 order-last">maximum email size</dt><dd class="text-2xl font-bold tabular-nums text-ink">{{ freePlan.limits.maxEmailSizeMb }}<span class="text-sm font-medium text-ink/55"> MB</span></dd></div>
+              <div class="flex flex-col"><dt class="mt-1 text-xs text-ink/55 order-last">email retention</dt><dd class="text-2xl font-bold text-ink">{{ freePlan.limits.retentionDays === 365 ? '1 year' : freePlan.limits.retentionDays + ' days' }}</dd></div>
+            </dl>
+            <p class="mt-7 border-t border-border pt-5 text-xs leading-5 text-ink/55">Includes HTML & text inspection, device-width previews, and live inbox updates.</p>
+          </div>
+        </div>
+      </article>
+
+      <div class="mb-5 mt-10 flex flex-wrap items-center justify-between gap-2">
+        <h3 class="text-sm font-semibold text-ink">More capacity, coming soon</h3>
+        <span class="text-xs text-ink/50">Preview the planned limits</span>
+      </div>
+      <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        @for (plan of plans.slice(1); track plan.name) {
+          <article class="flex flex-col rounded-2xl border border-border bg-surface p-6">
+            <div class="flex items-center justify-between gap-2">
+              <h3 class="text-lg font-bold capitalize text-ink">{{ plan.name }}</h3>
+              <span class="rounded-full bg-surface-raised px-2 py-1 text-[9px] font-semibold uppercase tracking-wider text-ink/55">Coming soon</span>
+            </div>
+            <div class="my-6"><p class="text-3xl font-bold tracking-tight tabular-nums text-ink">{{ plan.limits.emailsPerMonth | number }}</p><p class="mt-1 text-xs text-ink/55">emails per month</p></div>
+            <dl class="space-y-3 border-t border-border pt-5 text-xs">
+              <div class="flex items-center justify-between gap-2"><dt class="text-ink/55">Sending rate</dt><dd class="font-semibold tabular-nums text-ink">{{ plan.limits.emailsPerSecond }} / sec</dd></div>
+              <div class="flex items-center justify-between gap-2"><dt class="text-ink/55">Inboxes</dt><dd class="font-semibold tabular-nums text-ink">{{ plan.limits.maxMailboxes }}</dd></div>
+              <div class="flex items-center justify-between gap-2"><dt class="text-ink/55">Team members</dt><dd class="font-semibold tabular-nums text-ink">{{ plan.limits.maxTeamMembers }}</dd></div>
+              <div class="flex items-center justify-between gap-2"><dt class="text-ink/55">Email size</dt><dd class="font-semibold text-ink">{{ plan.limits.maxEmailSizeMb }} MB</dd></div>
+              <div class="flex items-center justify-between gap-2"><dt class="text-ink/55">Retention</dt><dd class="font-semibold text-ink">{{ plan.limits.retentionDays === null ? 'Unlimited' : plan.limits.retentionDays + ' days' }}</dd></div>
+            </dl>
+            <button type="button" class="mt-6 w-full rounded-lg border border-border bg-surface-raised/60 px-4 py-2.5 text-xs font-medium text-ink/40 cursor-not-allowed" disabled>Coming soon</button>
+          </article>
+        }
+      </div>
+      <p class="mt-6 text-xs leading-5 text-ink/50">Allowances are shared across an organization's inboxes. Attachment files are not stored on any plan.</p>
+    </div>
+  </section>
+
+  <!-- ========================================================================= -->
+  <!-- 7. FREQUENTLY ASKED QUESTIONS -->
+  <!-- ========================================================================= -->
+  <section id="faq" class="py-16 md:py-24 bg-surface">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
+      <div class="text-center max-w-2xl mx-auto mb-14">
+        <h2 class="text-3xl font-extrabold tracking-tight text-ink sm:text-4xl">
+          Frequently Asked Questions
+        </h2>
+        <p class="mt-3 text-base text-ink/70">
+          Everything you need to know about testing emails with Email Sandbox.
+        </p>
+      </div>
+
+      <div class="space-y-3">
+        <!-- FAQ 1 -->
+        <div class="rounded-xl border border-border bg-surface overflow-hidden transition-all specular-card">
+          <button
+            type="button"
+            (click)="toggleFaq(0)"
+            class="flex w-full items-center justify-between p-5 text-left font-semibold text-ink text-sm sm:text-base focus:outline-none"
+          >
+            <span>Can any email accidentally be sent to a real customer?</span>
+            <ng-icon
+              name="lucideChevronDown"
+              size="18"
+              class="text-ink/50 transition-transform duration-200"
+              [class.rotate-180]="openFaqIndex() === 0"
+            />
+          </button>
+          @if (openFaqIndex() === 0) {
+            <div class="px-5 pb-5 text-xs sm:text-sm text-ink/70 leading-relaxed border-t border-border/50 pt-3 animate-fade-in">
+              No. Email Sandbox completely disables external email relaying. Every email sent to your sandbox is safely trapped and stored only in your private testing inbox. It is physically impossible for an email to leave the platform.
+            </div>
+          }
+        </div>
+
+        <!-- FAQ 2 -->
+        <div class="rounded-xl border border-border bg-surface overflow-hidden transition-all specular-card">
+          <button
+            type="button"
+            (click)="toggleFaq(1)"
+            class="flex w-full items-center justify-between p-5 text-left font-semibold text-ink text-sm sm:text-base focus:outline-none"
+          >
+            <span>How do I connect my website or application?</span>
+            <ng-icon
+              name="lucideChevronDown"
+              size="18"
+              class="text-ink/50 transition-transform duration-200"
+              [class.rotate-180]="openFaqIndex() === 1"
+            />
+          </button>
+          @if (openFaqIndex() === 1) {
+            <div class="px-5 pb-5 text-xs sm:text-sm text-ink/70 leading-relaxed border-t border-border/50 pt-3 animate-fade-in">
+              Just copy your host (<code>sandbox-smtp.email.dsourav.com</code>), port (<code>2525</code>), username, and password into your framework's email settings or <code>.env</code> file. Works out of the box with Node.js, Python, PHP, Java, Go, and all standard email libraries.
+            </div>
+          }
+        </div>
+
+        <!-- FAQ 3 -->
+        <div class="rounded-xl border border-border bg-surface overflow-hidden transition-all specular-card">
+          <button
+            type="button"
+            (click)="toggleFaq(2)"
+            class="flex w-full items-center justify-between p-5 text-left font-semibold text-ink text-sm sm:text-base focus:outline-none"
+          >
+            <span>Are email attachments saved in the free tier?</span>
+            <ng-icon
+              name="lucideChevronDown"
+              size="18"
+              class="text-ink/50 transition-transform duration-200"
+              [class.rotate-180]="openFaqIndex() === 2"
+            />
+          </button>
+          @if (openFaqIndex() === 2) {
+            <div class="px-5 pb-5 text-xs sm:text-sm text-ink/70 leading-relaxed border-t border-border/50 pt-3 animate-fade-in">
+              In the free tier, attachments are not stored. The system verifies the attachment names and headers so you know your app sent the files, but the heavy binary content is discarded to keep your inbox fast and clean. Attachments are currently discarded on all plans.
+            </div>
+          }
+        </div>
+
+        <!-- FAQ 4 -->
+        <div class="rounded-xl border border-border bg-surface overflow-hidden transition-all specular-card">
+          <button
+            type="button"
+            (click)="toggleFaq(3)"
+            class="flex w-full items-center justify-between p-5 text-left font-semibold text-ink text-sm sm:text-base focus:outline-none"
+          >
+            <span>Can I test emails on mobile and tablet screen sizes?</span>
+            <ng-icon
+              name="lucideChevronDown"
+              size="18"
+              class="text-ink/50 transition-transform duration-200"
+              [class.rotate-180]="openFaqIndex() === 3"
+            />
+          </button>
+          @if (openFaqIndex() === 3) {
+            <div class="px-5 pb-5 text-xs sm:text-sm text-ink/70 leading-relaxed border-t border-border/50 pt-3 animate-fade-in">
+              Yes! Every received email includes built-in view switchers for Desktop, Tablet (580px), and Mobile (360px) so you can ensure your responsive styles and call-to-action buttons look great on every device.
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================================= -->
+  <!-- 8. FINAL CONVERSION BANNER -->
+  <!-- ========================================================================= -->
+  <section class="py-16 md:py-24 bg-surface">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div class="relative overflow-hidden rounded-3xl border border-primary/30 bg-gradient-to-b from-surface-raised via-surface to-surface-raised p-8 sm:p-16 text-center shadow-2xl specular-highlight">
+        <div class="mx-auto max-w-2xl relative z-10">
+          <h2 class="text-3xl font-extrabold tracking-tight sm:text-4xl text-ink leading-tight">
+            Stop worrying about staging email mistakes.
+          </h2>
+          <p class="mt-4 text-base text-ink/70 leading-relaxed font-normal">
+            Catch broken layouts, incorrect links, and staging errors before your customers ever see them.
+          </p>
+          <div class="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3.5">
+            @if (auth.isAuthenticated()) {
+              <a
+                routerLink="/mailboxes"
+                class="btn btn-primary btn-md w-full sm:w-auto px-8 gap-2 shadow-sm font-semibold specular-highlight"
+              >
+                <ng-icon name="lucideInbox" size="18" />
+                Go to Mailboxes
+              </a>
+            } @else {
+              <a
+                routerLink="/register"
+                class="btn btn-primary btn-md w-full sm:w-auto px-8 gap-2 shadow-sm font-semibold specular-highlight"
+              >
+                Start Testing for Free
+                <ng-icon name="lucideArrowRight" size="18" />
+              </a>
+              <a
+                routerLink="/login"
+                class="btn btn-outline btn-md w-full sm:w-auto px-6 font-medium text-ink hover:bg-surface-raised border-border"
+              >
+                Sign in
+              </a>
+            }
+          </div>
+          <p class="mt-5 text-xs text-ink/50">
+            Generous free tier included &bull; No credit card required &bull; Ready in 30 seconds
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================================= -->
+  <!-- 9. FOOTER (NO ENGINEERING LINKS - POINT 10) -->
+  <!-- ========================================================================= -->
+  <footer class="border-t border-border bg-surface-raised/40 py-12 text-xs text-ink/65">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-8 mb-10">
+        <!-- Brand Info -->
+        <div class="col-span-2">
+          <div class="mb-3">
+            <app-logo [size]="28" [showWordmark]="true" [showBadge]="false" textClass="text-base font-bold text-ink" />
+          </div>
+          <p class="text-xs text-ink/65 max-w-sm leading-relaxed mb-4">
+            The safe, simple email testing sandbox. Ingest, inspect, and debug transactional emails without ever sending to real recipients.
+          </p>
+          <div class="flex items-center gap-2 text-[11px] text-ink/75 font-medium">
+            <span class="relative flex h-2 w-2">
+              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-success opacity-75"></span>
+              <span class="relative inline-flex rounded-full h-2 w-2 bg-success"></span>
+            </span>
+            <span>All Systems Operational &bull; SMTP Port 2525</span>
+          </div>
+        </div>
+
+        <!-- Links Col 1: Product -->
+        <div>
+          <div class="font-semibold text-ink text-xs uppercase tracking-wider mb-3">Product</div>
+          <ul class="space-y-2">
+            <li><a href="#demo" class="hover:text-primary transition-colors">Interactive Demo</a></li>
+            <li><a href="#features" class="hover:text-primary transition-colors">Features</a></li>
+            <li><a href="#comparison" class="hover:text-primary transition-colors">Comparison</a></li>
+            <li><a href="#pricing" class="hover:text-primary transition-colors">Pricing</a></li>
+          </ul>
+        </div>
+
+        <!-- Links Col 2: Account & Support -->
+        <div>
+          <div class="font-semibold text-ink text-xs uppercase tracking-wider mb-3">Account & Help</div>
+          <ul class="space-y-2">
+            <li><a routerLink="/login" class="hover:text-primary transition-colors">Sign In</a></li>
+            <li><a routerLink="/register" class="hover:text-primary transition-colors">Create Free Account</a></li>
+            <li><a routerLink="/forgot-password" class="hover:text-primary transition-colors">Reset Password</a></li>
+            <li><a href="#faq" class="hover:text-primary transition-colors">FAQ</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Bottom Legal Bar -->
+      <div class="border-t border-border pt-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-[11px]">
+        <div>
+          &copy; 2026 EmailSandbox. Safe transactional email testing.
+        </div>
+        <div class="flex items-center gap-4">
+          <span class="text-ink/40">Privacy Policy</span>
+          <span class="text-ink/40">Terms of Service</span>
+          <app-theme-switcher />
+        </div>
+      </div>
+    </div>
+  </footer>
+</div>

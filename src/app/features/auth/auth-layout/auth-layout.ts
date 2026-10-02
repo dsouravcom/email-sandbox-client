@@ -1,9 +1,10 @@
 import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { RouterLink, RouterOutlet } from '@angular/router';
+import { AppLogo } from '../../../shared/ui/logo/logo';
 
 /** Centered card shared by all sign-in and sign-up pages (rendered as child routes). */
 @Component({
-  imports: [RouterOutlet],
+  imports: [RouterOutlet, RouterLink, AppLogo],
   selector: 'app-auth-layout',
   templateUrl: './auth-layout.html',
 })

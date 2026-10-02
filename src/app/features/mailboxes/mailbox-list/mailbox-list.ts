@@ -1,4 +1,4 @@
-import { Component, inject, signal, viewChild } from '@angular/core';
+import { Component, computed, inject, signal, viewChild } from '@angular/core';
 import { NgIcon } from '@ng-icons/core';
 import { getApiErrorMessage } from '../../../core/http/api-error';
 import { Mailbox } from '../../../core/mailboxes/mailbox-models';
@@ -22,6 +22,11 @@ export class MailboxList {
   private readonly toast = inject(Toast);
   protected readonly organizationStore = inject(OrganizationStore);
   protected readonly mailboxStore = inject(MailboxStore);
+
+  protected readonly atInboxLimit = computed(() => {
+    const org = this.organizationStore.currentOrganization();
+    return !!org && this.mailboxStore.mailboxes().length >= org.limits.maxMailboxes;
+  });
 
   protected readonly showCreateDialog = signal(false);
   protected readonly editingMailbox = signal<Mailbox | null>(null);

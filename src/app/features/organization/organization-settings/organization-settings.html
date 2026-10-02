@@ -1,65 +1,92 @@
-<div class="mx-auto h-full max-w-2xl overflow-y-auto px-6 py-8">
-  <h1 class="text-xl font-semibold text-ink">Organization settings</h1>
+<div class="h-full overflow-y-auto">
+  <div class="mx-auto w-full max-w-6xl px-6 py-8 lg:px-10">
+    <header class="flex flex-wrap items-start justify-between gap-4">
+      <div><p class="text-xs font-semibold uppercase tracking-wider text-primary">Workspace</p><h1 class="mt-2 text-2xl font-bold tracking-tight text-ink">Organization settings</h1><p class="mt-2 text-sm text-ink/60">Manage your organization and keep track of your plan's capacity.</p></div>
+      <button type="button" class="btn btn-ghost btn-sm gap-2" [disabled]="loading() || organizationStore.loading()" (click)="refresh()"><ng-icon name="lucideRefreshCw" size="15" />Refresh</button>
+    </header>
 
-  @if (organization(); as organization) {
-    <div class="mt-6 grid grid-cols-2 gap-x-6 gap-y-3 rounded-box border border-border bg-surface-raised p-4 text-sm sm:grid-cols-4">
-      <div>
-        <p class="text-ink/50">Plan</p>
-        <p class="font-medium text-ink capitalize">{{ organization.plan }}</p>
-      </div>
-      <div>
-        <p class="text-ink/50">Your role</p>
-        <p class="font-medium text-ink capitalize">{{ organization.role }}</p>
-      </div>
-      <div>
-        <p class="text-ink/50">Max mailboxes</p>
-        <p class="font-medium text-ink">{{ organization.maxMailboxes }}</p>
-      </div>
-      <div>
-        <p class="text-ink/50">Max messages / mailbox</p>
-        <p class="font-medium text-ink">{{ organization.maxMessagesPerMailbox }}</p>
-      </div>
-    </div>
+    @if (loadError() || (!organization() ? organizationStore.error() : null); as message) {
+      <div class="mt-6 rounded-box border border-error/30 bg-error/5 p-5" role="alert"><p class="text-sm text-ink">{{ message }}</p><button type="button" class="btn btn-outline btn-sm mt-3" (click)="refresh()">Try again</button></div>
+    }
+    @if (organization(); as org) {
+      <section class="mt-8 overflow-hidden rounded-2xl border border-primary/25 bg-surface-raised/50">
+        <div class="flex flex-wrap items-center justify-between gap-5 p-6">
+          <div class="flex items-center gap-4"><div class="grid h-12 w-12 place-items-center rounded-xl bg-primary/10 text-primary"><ng-icon name="lucideBuilding2" size="24" /></div><div><h2 class="text-lg font-semibold text-ink">{{ org.name }}</h2><p class="mt-1 text-xs text-ink/55">{{ org.isPersonal ? 'Personal organization' : 'Shared organization' }} · <span class="capitalize">{{ org.role }}</span></p></div></div>
+          <div class="flex items-center gap-3"><span class="rounded-full border border-primary/25 bg-primary/10 px-4 py-1.5 text-sm font-semibold capitalize text-primary">{{ org.plan }} plan</span><a routerLink="/" fragment="pricing" class="text-xs font-medium text-ink/60 hover:text-primary">View plans</a></div>
+        </div>
+        <div class="border-t border-border px-6 py-3 text-xs text-ink/60">
+          @if (org.planExpiresAt) { <span class="capitalize">{{ org.billingPeriod }}</span> subscription · Expires {{ org.planExpiresAt | date:'medium' }} · Returns to Free at expiry. }
+          @else { Free account · No subscription expiration. Upgrades are currently unavailable. }
+        </div>
+      </section>
 
-    <form [formRoot]="settingsForm" class="mt-6 space-y-5">
-      <div>
-        <label for="org-name" class="form-label">Organization name</label>
-        <input
-          id="org-name"
-          type="text"
-          class="form-input"
-          [formField]="settingsForm.name"
-          [attr.aria-invalid]="settingsForm.name().touched() && settingsForm.name().invalid()"
-        />
-        <app-field-error [field]="settingsForm.name" />
-      </div>
-
-      <div>
-        <label for="org-retention" class="form-label">Retention period (days)</label>
-        <input
-          id="org-retention"
-          type="number"
-          class="form-input max-w-40"
-          [formField]="settingsForm.retentionDays"
-          [attr.aria-invalid]="settingsForm.retentionDays().touched() && settingsForm.retentionDays().invalid()"
-        />
-        <p class="mt-1 text-xs text-ink/50">How long a mailbox keeps emails before the default cleanup removes them.</p>
-        <app-field-error [field]="settingsForm.retentionDays" />
+      <div class="mt-6 grid gap-5 md:grid-cols-3">
+        <section class="rounded-2xl border border-border bg-surface p-5">
+          <div class="flex items-center justify-between text-ink/55"><h2 class="text-sm font-medium">Monthly emails</h2><ng-icon name="lucideMail" size="18" /></div>
+          <p class="mt-4 text-3xl font-bold tabular-nums text-ink">{{ org.monthlyUsage | number }} <span class="text-sm font-normal text-ink/45">/ {{ org.limits.emailsPerMonth | number }}</span></p>
+          <div class="mt-4 h-1.5 overflow-hidden rounded-full bg-surface-raised" role="progressbar" aria-label="Monthly email allowance used" [attr.aria-valuenow]="emailUsagePercent()" aria-valuemax="100" [attr.aria-valuetext]="org.monthlyUsage + ' of ' + org.limits.emailsPerMonth + ' emails'" aria-valuemin="0"><div class="h-full rounded-full bg-primary" [style.width.%]="emailUsagePercent()"></div></div>
+          <p class="mt-3 text-xs text-ink/55">Resets {{ org.usageResetsAt | date:'MMM d, y, HH:mm':'UTC' }} UTC</p>
+        </section>
+        <section class="rounded-2xl border border-border bg-surface p-5">
+          <div class="flex items-center justify-between text-ink/55"><h2 class="text-sm font-medium">Inboxes</h2><ng-icon name="lucideInbox" size="18" /></div>
+          <p class="mt-4 text-3xl font-bold tabular-nums text-ink">{{ org.mailboxCount | number }} <span class="text-sm font-normal text-ink/45">/ {{ org.limits.maxMailboxes | number }}</span></p>
+          <div class="mt-4 h-1.5 overflow-hidden rounded-full bg-surface-raised" role="progressbar" aria-label="Inbox allowance used" [attr.aria-valuenow]="inboxUsagePercent()" aria-valuemax="100" [attr.aria-valuetext]="org.mailboxCount + ' of ' + org.limits.maxMailboxes + ' inboxes'" aria-valuemin="0"><div class="h-full rounded-full bg-primary" [style.width.%]="inboxUsagePercent()"></div></div>
+          <p class="mt-3 text-xs text-ink/55">{{ org.mailboxCount > org.limits.maxMailboxes ? 'Over plan limit; excess inboxes stop receiving mail.' : 'Active and paused inboxes count toward your limit.' }}</p>
+        </section>
+        <section class="rounded-2xl border border-border bg-surface p-5">
+          <div class="flex items-center justify-between text-ink/55"><h2 class="text-sm font-medium">Team seats</h2><ng-icon name="lucideUser" size="18" /></div>
+          <p class="mt-4 text-3xl font-bold tabular-nums text-ink">{{ org.teamMemberCount | number }} <span class="text-sm font-normal text-ink/45">/ {{ org.limits.maxTeamMembers | number }}</span></p>
+          <div class="mt-4 h-1.5 overflow-hidden rounded-full bg-surface-raised" role="progressbar" aria-label="Team seat allowance used" [attr.aria-valuenow]="memberUsagePercent()" aria-valuemax="100" [attr.aria-valuetext]="org.teamMemberCount + ' of ' + org.limits.maxTeamMembers + ' team seats'" aria-valuemin="0"><div class="h-full rounded-full bg-primary" [style.width.%]="memberUsagePercent()"></div></div>
+          <p class="mt-3 text-xs text-ink/55">Owner, active members, and pending invitations.</p>
+        </section>
       </div>
 
-      @if (errorMessage(); as message) {
-        <p class="alert alert-error text-sm" role="alert">{{ message }}</p>
-      }
+      <div class="mt-6 grid gap-6 lg:grid-cols-[1.15fr_1fr]">
+        <section class="rounded-2xl border border-border bg-surface p-6">
+          <h2 class="text-base font-semibold text-ink">Organization details</h2><p class="mt-1 text-xs text-ink/55">The name shown in your workspace switcher.</p>
+          <form [formRoot]="settingsForm" class="mt-6 space-y-4">
+            <div><label for="org-name" class="form-label">Organization name</label><input id="org-name" type="text" class="form-input" [formField]="settingsForm.name" [attr.aria-invalid]="settingsForm.name().touched() && settingsForm.name().invalid()" /><app-field-error [field]="settingsForm.name" /></div>
+            @if (errorMessage(); as message) { <p class="text-sm text-error" role="alert">{{ message }}</p> }
+            @if (canEdit()) { <button type="submit" class="btn btn-primary btn-sm" [disabled]="settingsForm().submitting()">{{ settingsForm().submitting() ? 'Saving…' : 'Save changes' }}</button> }
+            @else { <p class="text-xs text-ink/55">Only admins and owners can update this name.</p> }
+          </form>
+          <dl class="mt-6 space-y-3 border-t border-border pt-5 text-xs">
+            <div class="flex justify-between gap-4"><dt class="text-ink/50">Created</dt><dd class="text-ink">{{ org.createdAt | date:'mediumDate' }}</dd></div>
+            <div class="flex justify-between gap-4"><dt class="text-ink/50">Your role</dt><dd class="capitalize text-ink">{{ org.role }}</dd></div>
+            <div><dt class="text-ink/50">Organization ID</dt><dd class="mt-2 flex items-center justify-between gap-2"><code class="break-all text-[11px] text-ink/65">{{ org.id }}</code><app-copy-button [value]="org.id" label="organization ID" /></dd></div>
+          </dl>
+        </section>
+        <section class="rounded-2xl border border-border bg-surface p-6">
+          <h2 class="text-base font-semibold text-ink">Plan limits</h2><p class="mt-1 text-xs text-ink/55">Shared across all inboxes in this organization.</p>
+          <dl class="mt-5 divide-y divide-border text-sm">
+            <div class="flex justify-between gap-3 py-3"><dt class="text-ink/60">Sending rate</dt><dd class="font-semibold text-ink">{{ org.limits.emailsPerSecond }} / second</dd></div>
+            <div class="flex justify-between gap-3 py-3"><dt class="text-ink/60">Emails per month</dt><dd class="font-semibold text-ink">{{ org.limits.emailsPerMonth | number }}</dd></div>
+            <div class="flex justify-between gap-3 py-3"><dt class="text-ink/60">Inboxes</dt><dd class="font-semibold text-ink">{{ org.limits.maxMailboxes | number }}</dd></div>
+            <div class="flex justify-between gap-3 py-3"><dt class="text-ink/60">Team members</dt><dd class="font-semibold text-ink">{{ org.limits.maxTeamMembers | number }}</dd></div>
+            <div class="flex justify-between gap-3 py-3"><dt class="text-ink/60">Maximum email size</dt><dd class="font-semibold text-ink">{{ org.limits.maxEmailSizeMb }} MB</dd></div>
+            <div class="flex justify-between gap-3 py-3"><dt class="text-ink/60">Email retention</dt><dd class="font-semibold text-ink">{{ org.limits.retentionDays === null ? 'Unlimited' : org.limits.retentionDays === 365 ? '1 year' : org.limits.retentionDays + ' days' }}</dd></div>
+          </dl>
+          <p class="mt-4 text-xs leading-5 text-ink/50">Deleting messages does not reset your monthly allowance. Attachment files are not stored.</p>
+        </section>
+      </div>
 
-      @if (canEdit()) {
-        <button type="submit" class="btn btn-primary" [disabled]="settingsForm().submitting()">
-          {{ settingsForm().submitting() ? 'Saving…' : 'Save changes' }}
-        </button>
-      } @else {
-        <p class="text-xs text-ink/50">Only organization admins and owners can change these settings.</p>
-      }
-    </form>
-  } @else {
-    <div class="mt-6 h-40 animate-pulse rounded-box bg-surface-raised"></div>
-  }
+      <section class="mt-6 overflow-hidden rounded-2xl border border-border bg-surface">
+        <div class="flex items-center justify-between gap-4 border-b border-border p-6"><div><h2 class="text-base font-semibold text-ink">Inbox overview</h2><p class="mt-1 text-xs text-ink/55">Your inboxes and recent activity.</p></div><a routerLink="/mailboxes" class="btn btn-ghost btn-sm gap-2">Manage inboxes <ng-icon name="lucideArrowRight" size="14" /></a></div>
+        @if (mailboxStore.error(); as message) { <p class="p-6 text-sm text-error" role="alert">{{ message }}</p> }
+        @else if (mailboxStore.loading()) { <p class="p-6 text-sm text-ink/55">Loading inboxes…</p> }
+        @else if (inboxes().length === 0) { <p class="p-6 text-sm text-ink/55">No inboxes yet. Create one from the inbox page to start testing.</p> }
+        @else {
+          <div class="overflow-x-auto"><table class="w-full text-left text-sm"><thead class="bg-surface-raised/40 text-xs text-ink/50"><tr><th class="px-6 py-3 font-medium">Inbox</th><th class="px-6 py-3 font-medium">Receiving status</th><th class="px-6 py-3 font-medium">Last message</th></tr></thead><tbody class="divide-y divide-border">
+            @for (inbox of inboxes().slice(0, 5); track inbox.id; let index = $index) {
+              <tr><td class="px-6 py-4"><a [routerLink]="['/mailbox', inbox.id]" class="font-medium text-ink hover:text-primary">{{ inbox.name }}</a><p class="mt-1 text-xs text-ink/45">{{ inbox.description || 'SMTP test inbox' }}</p></td><td class="px-6 py-4 text-xs text-ink/65">{{ index >= org.limits.maxMailboxes ? 'Over plan limit' : inbox.status === 'paused' ? 'Paused' : 'Active' }}</td><td class="px-6 py-4 text-xs text-ink/55">{{ inbox.stats?.lastReceivedAt ? (inbox.stats?.lastReceivedAt | date:'medium') : 'No messages yet' }}</td></tr>
+            }
+          </tbody></table></div>
+        }
+      </section>
+    } @else if (loading() || organizationStore.loading()) {
+      <div class="mt-8 space-y-6" aria-label="Loading organization details" aria-busy="true"><div class="h-32 animate-pulse rounded-2xl bg-surface-raised"></div><div class="grid gap-5 md:grid-cols-3"><div class="h-40 animate-pulse rounded-2xl bg-surface-raised"></div><div class="h-40 animate-pulse rounded-2xl bg-surface-raised"></div><div class="h-40 animate-pulse rounded-2xl bg-surface-raised"></div></div></div>
+    } @else if (!loadError() && !organizationStore.error()) {
+      <p class="mt-8 text-sm text-ink/60">Select an organization to view its settings.</p>
+    }
+  </div>
 </div>

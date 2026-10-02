@@ -1,7 +1,11 @@
-<main class="flex min-h-screen items-center justify-center bg-surface px-4 py-12">
+<main class="flex min-h-screen items-center justify-center bg-surface px-4 py-12 bg-radial-hero bg-grid-subtle">
   <div class="w-full max-w-md">
-    <p class="mb-8 text-center text-2xl font-semibold tracking-tight text-ink">Email Sandbox</p>
-    <div class="rounded-box border border-border bg-surface-raised p-8 shadow-xs">
+    <div class="mb-8 flex justify-center">
+      <a routerLink="/" title="Return to Email Sandbox Home" class="group flex items-center transition-transform hover:scale-105">
+        <app-logo [size]="36" [showWordmark]="true" [showBadge]="true" badgeText="auth" textClass="text-2xl font-extrabold tracking-tight text-ink" />
+      </a>
+    </div>
+    <div class="rounded-box border border-border bg-surface-raised p-8 shadow-sm specular-card">
       <router-outlet />
     </div>
   </div>

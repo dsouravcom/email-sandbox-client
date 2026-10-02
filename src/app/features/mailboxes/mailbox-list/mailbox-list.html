@@ -9,13 +9,17 @@
     <button
       type="button"
       class="btn btn-primary gap-2"
-      [disabled]="!organizationStore.currentOrganizationId()"
+      [disabled]="!organizationStore.currentOrganizationId() || atInboxLimit()"
       (click)="showCreateDialog.set(true)"
     >
       <ng-icon name="lucidePlus" size="16" />
       Create mailbox
     </button>
   </div>
+
+  @if (atInboxLimit()) {
+    <p class="mt-4 text-sm text-ink/60">Your plan's inbox limit has been reached. Existing inboxes remain available to read.</p>
+  }
 
   <div class="mt-6">
     @if (mailboxStore.error(); as message) {

@@ -22,9 +22,11 @@ import { ThemeSwitcher } from '../theme-switcher/theme-switcher';
  * (`/mailbox/:id`) intentionally use different first path segments (see
  * `app.routes.ts`), which `routerLinkActive` can't match as one group.
  */
+import { AppLogo } from '../../shared/ui/logo/logo';
+
 @Component({
   selector: 'app-sidebar',
-  imports: [RouterLink, RouterLinkActive, NgIcon, ThemeSwitcher, ProfileMenu],
+  imports: [RouterLink, RouterLinkActive, NgIcon, ThemeSwitcher, ProfileMenu, AppLogo],
   host: { class: 'h-full' },
   templateUrl: './sidebar.html',
 })

@@ -1,4 +1,14 @@
-<aside class="flex h-full w-16 min-w-16 flex-col items-center gap-1 border-r border-border bg-surface py-4">
+<aside class="flex h-full w-16 min-w-16 flex-col items-center gap-1 border-r border-border bg-surface py-3">
+  <a
+    routerLink="/"
+    title="Email Sandbox Home"
+    class="flex h-10 w-10 items-center justify-center rounded-xl mb-1 text-primary transition-transform hover:scale-105"
+  >
+    <app-logo [size]="24" [showWordmark]="false" />
+  </a>
+
+  <div class="w-8 h-px bg-border/60 mb-2"></div>
+
   <a
     routerLink="/mailboxes"
     [class.bg-surface-raised]="isEmailSectionActive()"

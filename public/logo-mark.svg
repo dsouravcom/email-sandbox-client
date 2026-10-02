@@ -1,0 +1,40 @@
+<svg width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="es-top-flap" x1="6" y1="5" x2="30" y2="17" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#f59e0b" />
+      <stop offset="100%" stop-color="#b45309" />
+    </linearGradient>
+    <linearGradient id="es-left-facet" x1="4" y1="12" x2="18" y2="31" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#1e293b" />
+      <stop offset="100%" stop-color="#0f172a" />
+    </linearGradient>
+    <linearGradient id="es-right-facet" x1="18" y1="17" x2="32" y2="31" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#334155" />
+      <stop offset="100%" stop-color="#1e293b" />
+    </linearGradient>
+    <radialGradient id="es-amber-core" cx="18" cy="19" r="6" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#f59e0b" stop-opacity="1" />
+      <stop offset="70%" stop-color="#d97706" stop-opacity="0.4" />
+      <stop offset="100%" stop-color="#b45309" stop-opacity="0" />
+    </radialGradient>
+  </defs>
+
+  <!-- Left Containment Wall -->
+  <path d="M5 11.5L18 19V32L5 24.5V11.5Z" fill="url(#es-left-facet)" stroke="#475569" stroke-width="1.2" stroke-linejoin="round" />
+
+  <!-- Right Containment Wall -->
+  <path d="M18 19L31 11.5V24.5L18 32V19Z" fill="url(#es-right-facet)" stroke="#475569" stroke-width="1.2" stroke-linejoin="round" />
+
+  <!-- Top Envelope Flap -->
+  <path d="M18 4L31 11.5L18 19L5 11.5L18 4Z" fill="url(#es-top-flap)" stroke="#d97706" stroke-width="1.2" stroke-linejoin="round" />
+
+  <!-- Inner Envelope Geometry -->
+  <path d="M5 11.5L18 19L31 11.5" stroke="#94a3b8" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" />
+
+  <!-- Internal Sandbox Core -->
+  <circle cx="18" cy="19" r="4.5" fill="url(#es-amber-core)" />
+  <circle cx="18" cy="19" r="1.8" fill="#f59e0b" />
+
+  <!-- Vertical Crease -->
+  <line x1="18" y1="19" x2="18" y2="32" stroke="#475569" stroke-width="1.2" stroke-linecap="round" />
+</svg>

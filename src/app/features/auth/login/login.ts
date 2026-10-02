@@ -62,6 +62,6 @@ export class Login {
   /** Only in-app paths are allowed, so a crafted link can't redirect to another site. */
   private returnUrl(): string {
     const url = this.route.snapshot.queryParamMap.get('returnUrl');
-    return url?.startsWith('/') && !url.startsWith('//') ? url : '/';
+    return url?.startsWith('/') && !url.startsWith('//') && url !== '/' ? url : '/mailboxes';
   }
 }

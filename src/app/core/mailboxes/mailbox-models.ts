@@ -52,8 +52,6 @@ export interface UpdateMailboxRequest {
   name?: string;
   description?: string | null;
   status?: 'active' | 'paused';
-  retentionDays?: number | null;
-  messageLimit?: number | null;
 }
 
 /**

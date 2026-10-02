@@ -52,7 +52,7 @@ export class VerifyEmail {
             if (provisioning) {
               await this.router.navigate(['/mailbox', provisioning.mailbox.id], { state: { provisioning } });
             } else {
-              await this.router.navigateByUrl('/');
+              await this.router.navigateByUrl('/mailboxes');
             }
           } catch (error) {
             const apiError = getApiError(error);
