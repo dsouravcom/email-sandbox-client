@@ -5,6 +5,8 @@ export interface User {
   email: string;
   emailVerifiedAt: string | null;
   createdAt: string;
+  profileDetails?: import('../account/account-api').ProfileDetails;
+  preferences?: import('../account/account-api').AccountPreferences;
 }
 
 /**

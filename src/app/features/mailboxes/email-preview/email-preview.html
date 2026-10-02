@@ -30,6 +30,7 @@
       </div>
       <div class="flex shrink-0 flex-col items-end gap-2">
         <div class="flex items-center gap-1">
+          @if (organizationStore.canManageEmails()) {
           <button
             type="button"
             class="btn btn-ghost btn-sm btn-square"
@@ -48,8 +49,9 @@
           >
             <ng-icon name="lucideTrash2" size="17" />
           </button>
+          }
         </div>
-        <span class="whitespace-nowrap text-xs text-ink/40">{{ detail.receivedAt | date: 'medium' }}</span>
+        <span class="whitespace-nowrap text-xs text-ink/40">{{ detail.receivedAt | date: preferences.dateFormat():preferences.timezone() }}</span>
       </div>
     </div>
 

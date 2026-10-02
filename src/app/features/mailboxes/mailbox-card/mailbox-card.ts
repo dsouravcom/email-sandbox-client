@@ -12,6 +12,7 @@ import { Mailbox } from '../../../core/mailboxes/mailbox-models';
 })
 export class MailboxCard {
   readonly mailbox = input.required<Mailbox>();
+  readonly canManage = input(false);
 
   readonly edit = output<Mailbox>();
   readonly delete = output<Mailbox>();

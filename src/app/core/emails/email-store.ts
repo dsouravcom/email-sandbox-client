@@ -5,6 +5,8 @@ import { MailboxEvent } from '../realtime/realtime-models';
 import { Realtime } from '../realtime/realtime';
 import { EmailApi } from './email-api';
 import { EmailDetail, EmailSummary } from './email-models';
+import { OrganizationStore } from '../organizations/organization-store';
+import { AccountPreferencesStore } from '../account/account-preferences';
 
 const PAGE_SIZE = 50;
 
@@ -15,6 +17,8 @@ const PAGE_SIZE = 50;
  */
 @Service()
 export class EmailStore {
+  private readonly organizations = inject(OrganizationStore);
+  private readonly preferences = inject(AccountPreferencesStore);
   private readonly api = inject(EmailApi);
   private readonly realtime = inject(Realtime);
 
@@ -124,7 +128,7 @@ export class EmailStore {
       const detail = await firstValueFrom(this.api.get(mailboxId, emailId));
       if (this._selectedEmailId() !== emailId) return;
       this._selectedEmail.set(detail);
-      if (!detail.read) {
+      if (!detail.read && this.organizations.canManageEmails() && this.preferences.autoMarkRead()) {
         this.applyReadState(emailId, true);
         firstValueFrom(this.api.setRead(mailboxId, emailId, { read: true })).catch(() => {
           this.applyReadState(emailId, false);

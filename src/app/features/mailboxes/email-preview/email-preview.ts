@@ -15,6 +15,8 @@ import { EmptyState } from '../../../shared/ui/empty-state/empty-state';
 import { ErrorState } from '../../../shared/ui/error-state/error-state';
 import { SafeEmailHtml } from '../../../shared/ui/safe-email-html/safe-email-html';
 import { Skeleton } from '../../../shared/ui/skeleton/skeleton';
+import { OrganizationStore } from '../../../core/organizations/organization-store';
+import { AccountPreferencesStore } from '../../../core/account/account-preferences';
 
 type ContentTab = 'html' | 'text';
 type DeviceMode = 'desktop' | 'tablet' | 'mobile';
@@ -40,6 +42,8 @@ function formatAddresses(addresses: EmailAddress[]): string {
   templateUrl: './email-preview.html',
 })
 export class EmailPreview {
+  protected readonly organizationStore = inject(OrganizationStore);
+  protected readonly preferences = inject(AccountPreferencesStore);
   private readonly emailApi = inject(EmailApi);
   private readonly emailStore = inject(EmailStore);
   private readonly toast = inject(Toast);

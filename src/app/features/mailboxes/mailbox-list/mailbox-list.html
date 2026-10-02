@@ -6,6 +6,7 @@
         Every mailbox has its own SMTP credentials — point any app at one to capture its test emails here.
       </p>
     </div>
+    @if (organizationStore.canManage()) {
     <button
       type="button"
       class="btn btn-primary gap-2"
@@ -15,6 +16,7 @@
       <ng-icon name="lucidePlus" size="16" />
       Create mailbox
     </button>
+    }
   </div>
 
   @if (atInboxLimit()) {
@@ -34,7 +36,7 @@
         title="No mailboxes yet"
         description="Create a mailbox to get a dedicated inbox and SMTP credentials for testing."
       >
-        <button type="button" class="btn btn-primary btn-sm mt-2" (click)="showCreateDialog.set(true)">Create mailbox</button>
+        @if (organizationStore.canManage()) { <button type="button" class="btn btn-primary btn-sm mt-2" (click)="showCreateDialog.set(true)">Create mailbox</button> }
       </app-empty-state>
     } @else {
       <div class="overflow-visible rounded-box border border-border">
@@ -49,7 +51,7 @@
           </thead>
           <tbody>
             @for (mailbox of mailboxStore.mailboxes(); track mailbox.id) {
-              <app-mailbox-card [mailbox]="mailbox" (edit)="editingMailbox.set($event)" (delete)="requestDelete($event)" />
+              <app-mailbox-card [mailbox]="mailbox" [canManage]="organizationStore.canManage()" (edit)="editingMailbox.set($event)" (delete)="requestDelete($event)" />
             }
           </tbody>
         </table>

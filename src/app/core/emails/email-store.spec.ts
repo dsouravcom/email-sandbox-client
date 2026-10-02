@@ -6,6 +6,8 @@ import { EmailStore } from './email-store';
 import { EmailDetail, EmailSummary } from './email-models';
 import { MailboxEvent } from '../realtime/realtime-models';
 import { Realtime } from '../realtime/realtime';
+import { OrganizationStore } from '../organizations/organization-store';
+import { AccountPreferencesStore } from '../account/account-preferences';
 
 function summary(overrides: Partial<EmailSummary> = {}): EmailSummary {
   return {
@@ -32,8 +34,12 @@ describe('EmailStore', () => {
   let api: { list: ReturnType<typeof vi.fn>; get: ReturnType<typeof vi.fn>; setRead: ReturnType<typeof vi.fn> };
   let connectedListener: ((event: MailboxEvent) => void) | null;
   let lastConnectedMailboxId: string | null;
+  const canManageEmails = signal(true);
+  const autoMarkRead = signal(true);
 
   beforeEach(() => {
+    canManageEmails.set(true);
+    autoMarkRead.set(true);
     connectedListener = null;
     lastConnectedMailboxId = null;
 
@@ -56,9 +62,27 @@ describe('EmailStore', () => {
       providers: [
         { provide: EmailApi, useValue: api },
         { provide: Realtime, useValue: fakeRealtime },
+        { provide: OrganizationStore, useValue: { canManageEmails } },
+        { provide: AccountPreferencesStore, useValue: { autoMarkRead } },
       ],
     });
     store = TestBed.inject(EmailStore);
+  });
+
+  it('viewers can inspect an unread email without changing its read state', async () => {
+    canManageEmails.set(false);
+    await store.openMailbox('m1');
+    await store.selectEmail('e1');
+    expect(store.selectedEmail()?.id).toBe('e1');
+    expect(store.selectedEmail()?.read).toBe(false);
+    expect(api.setRead).not.toHaveBeenCalled();
+  });
+
+  it('keeps email unread when automatic marking is disabled in account preferences', async () => {
+    autoMarkRead.set(false);
+    await store.openMailbox('m1'); await store.selectEmail('e1');
+    expect(store.selectedEmail()?.read).toBe(false);
+    expect(api.setRead).not.toHaveBeenCalled();
   });
 
   it('loads the first page and opens a realtime subscription scoped to the mailbox', async () => {

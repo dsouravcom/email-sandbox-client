@@ -5,6 +5,27 @@
       <button type="button" class="btn btn-ghost btn-sm gap-2" [disabled]="loading() || organizationStore.loading()" (click)="refresh()"><ng-icon name="lucideRefreshCw" size="15" />Refresh</button>
     </header>
 
+    <nav class="mt-7 flex gap-1 overflow-x-auto border-b border-border" aria-label="Organization sections">
+      @for (item of tabs; track item) {
+        <button type="button" class="shrink-0 border-b-2 px-4 py-3 text-sm capitalize" [class.border-primary]="tab() === item" [class.text-primary]="tab() === item" [class.border-transparent]="tab() !== item" [attr.aria-current]="tab() === item ? 'page' : null" (click)="tab.set(item)">{{ item }} @if (item === 'invitations' && incoming().length) { <span class="ml-1 rounded-full bg-primary/10 px-2 text-xs">{{ incoming().length }}</span> }</button>
+      }
+    </nav>
+    @if (managementError(); as message) { <p role="alert" class="mt-5 rounded-xl border border-error/25 bg-error/5 p-4 text-sm text-error">{{ message }}</p> }
+    @if (confirmation(); as confirm) {
+      <div role="alertdialog" aria-modal="false" aria-labelledby="confirm-message" class="mt-5 rounded-xl border border-primary/30 bg-surface-raised p-5"><p id="confirm-message" class="text-sm text-ink">{{ confirm.message }}</p><div class="mt-4 flex gap-3"><button type="button" class="btn btn-primary btn-sm" (click)="confirmAction()" [disabled]="busy()">Confirm</button><button type="button" class="btn btn-ghost btn-sm" (click)="confirmation.set(null)">Cancel</button></div></div>
+    }
+
+    @if (tab() === 'organizations') {
+      <section class="mt-6 rounded-2xl border border-border p-6"><h2 class="font-semibold text-ink">Your organizations</h2><p class="mt-1 text-sm text-ink/55">Switch between organizations you own or have joined. Each has its own plan and inboxes.</p>
+        <div class="mt-5 grid gap-3 sm:grid-cols-2">@for (workspace of organizationStore.organizations(); track workspace.id) { <button type="button" class="rounded-xl border border-border bg-surface-raised p-4 text-left hover:border-primary/40" (click)="organizationStore.selectOrganization(workspace.id); tab.set('overview')"><span class="font-medium text-ink">{{ workspace.name }}</span><span class="mt-2 block text-xs capitalize text-ink/55">{{ workspace.role }} · {{ workspace.plan }} @if (workspace.id === organizationStore.currentOrganizationId()) { · Current }</span></button> }</div>
+      </section>
+      <section class="mt-6 rounded-2xl border border-border p-6"><h2 class="font-semibold text-ink">Create an organization</h2><p class="mt-1 text-sm text-ink/55">New organizations start on Free with one seat and one inbox allowance. Creating an organization does not move your existing inboxes.</p><form class="mt-5 flex flex-wrap items-end gap-3" (ngSubmit)="createOrganization()"><div class="min-w-60 flex-1"><label for="new-org-name" class="form-label">Organization name</label><input id="new-org-name" name="newName" class="form-input" [(ngModel)]="newName" required maxlength="100" /></div><button type="submit" class="btn btn-primary" [disabled]="busy() || !newName.trim()">Create organization</button></form></section>
+    }
+
+    @if (tab() === 'invitations') {
+      <section class="mt-6 rounded-2xl border border-border p-6"><h2 class="font-semibold text-ink">Invitations for you</h2><p class="mt-1 text-sm text-ink/55">Invitations are tied to your verified email address.</p><div class="mt-5 space-y-3">@for (invite of incoming(); track invite.id) { <div class="flex flex-wrap items-center justify-between gap-4 rounded-xl bg-surface-raised p-4"><div><p class="font-medium text-ink">{{ invite.organizationName }}</p><p class="mt-1 text-xs text-ink/55"><span class="capitalize">{{ invite.role }}</span> · Expires {{ invite.expiresAt | date:'medium' }}</p></div><div class="flex gap-2"><button type="button" class="btn btn-primary btn-sm" [disabled]="busy()" (click)="respond(invite, 'accept')">Accept</button><button type="button" class="btn btn-ghost btn-sm" [disabled]="busy()" (click)="respond(invite, 'decline')">Decline</button></div></div> } @empty { <p class="text-sm text-ink/55">No pending invitations.</p> }</div></section>
+    }
+
     @if (loadError() || (!organization() ? organizationStore.error() : null); as message) {
       <div class="mt-6 rounded-box border border-error/30 bg-error/5 p-5" role="alert"><p class="text-sm text-ink">{{ message }}</p><button type="button" class="btn btn-outline btn-sm mt-3" (click)="refresh()">Try again</button></div>
     }
@@ -20,6 +41,7 @@
         </div>
       </section>
 
+      @if (tab() === 'overview') {
       <div class="mt-6 grid gap-5 md:grid-cols-3">
         <section class="rounded-2xl border border-border bg-surface p-5">
           <div class="flex items-center justify-between text-ink/55"><h2 class="text-sm font-medium">Monthly emails</h2><ng-icon name="lucideMail" size="18" /></div>
@@ -40,8 +62,10 @@
           <p class="mt-3 text-xs text-ink/55">Owner, active members, and pending invitations.</p>
         </section>
       </div>
+      }
 
-      <div class="mt-6 grid gap-6 lg:grid-cols-[1.15fr_1fr]">
+      <div class="mt-6 grid gap-6">
+        @if (tab() === 'settings') {
         <section class="rounded-2xl border border-border bg-surface p-6">
           <h2 class="text-base font-semibold text-ink">Organization details</h2><p class="mt-1 text-xs text-ink/55">The name shown in your workspace switcher.</p>
           <form [formRoot]="settingsForm" class="mt-6 space-y-4">
@@ -56,6 +80,9 @@
             <div><dt class="text-ink/50">Organization ID</dt><dd class="mt-2 flex items-center justify-between gap-2"><code class="break-all text-[11px] text-ink/65">{{ org.id }}</code><app-copy-button [value]="org.id" label="organization ID" /></dd></div>
           </dl>
         </section>
+        @if (org.role !== 'owner') { <section class="rounded-2xl border border-error/25 p-6"><h2 class="font-semibold text-ink">Leave organization</h2><p class="mt-2 text-sm text-ink/55">Leaving removes your access to this organization's inboxes.</p><button type="button" class="btn btn-outline btn-sm mt-4" [disabled]="busy()" (click)="confirmLeave()">Leave organization</button></section> }
+        }
+        @if (tab() === 'overview') {
         <section class="rounded-2xl border border-border bg-surface p-6">
           <h2 class="text-base font-semibold text-ink">Plan limits</h2><p class="mt-1 text-xs text-ink/55">Shared across all inboxes in this organization.</p>
           <dl class="mt-5 divide-y divide-border text-sm">
@@ -68,8 +95,10 @@
           </dl>
           <p class="mt-4 text-xs leading-5 text-ink/50">Deleting messages does not reset your monthly allowance. Attachment files are not stored.</p>
         </section>
+        }
       </div>
 
+      @if (tab() === 'overview') {
       <section class="mt-6 overflow-hidden rounded-2xl border border-border bg-surface">
         <div class="flex items-center justify-between gap-4 border-b border-border p-6"><div><h2 class="text-base font-semibold text-ink">Inbox overview</h2><p class="mt-1 text-xs text-ink/55">Your inboxes and recent activity.</p></div><a routerLink="/mailboxes" class="btn btn-ghost btn-sm gap-2">Manage inboxes <ng-icon name="lucideArrowRight" size="14" /></a></div>
         @if (mailboxStore.error(); as message) { <p class="p-6 text-sm text-error" role="alert">{{ message }}</p> }
@@ -83,6 +112,22 @@
           </tbody></table></div>
         }
       </section>
+      }
+
+      @if (tab() === 'members') {
+        <section class="mt-6 overflow-hidden rounded-2xl border border-border"><div class="p-6"><h2 class="font-semibold text-ink">Members & roles</h2><p class="mt-2 text-sm text-ink/55">Owners control ownership and administrators. Administrators manage inboxes, invitations, and members. Members can inspect, mark, and delete individual emails. Viewers can inspect emails without changing them.</p><p class="mt-2 text-xs text-ink/50">Suspended members lose access immediately and do not occupy a seat.</p></div>
+          @if (managementLoading()) { <p class="p-6 text-sm text-ink/55">Loading members…</p> }
+          @else { <div class="overflow-x-auto"><table class="w-full text-left text-sm"><thead class="bg-surface-raised text-xs text-ink/55"><tr><th class="px-6 py-3">Member</th><th class="px-6 py-3">Role</th><th class="px-6 py-3">Status</th><th class="px-6 py-3">Actions</th></tr></thead><tbody class="divide-y divide-border">@for (member of members(); track member.id) { <tr><td class="px-6 py-4 text-ink">{{ member.name }}<p class="mt-1 text-xs text-ink/50">{{ member.email }}</p></td><td class="px-6 py-4 capitalize text-ink/70">@if (canManage(member)) { <select class="form-input min-w-28" [value]="member.role" [attr.aria-label]="'Role for ' + member.name" [disabled]="busy()" (change)="changeRole(member, $event)">@if (org.role === 'owner') { <option value="admin">Admin</option> }<option value="member">Member</option><option value="viewer">Viewer</option></select> } @else { {{ member.role }} }</td><td class="px-6 py-4 capitalize text-ink/55">{{ member.status }}</td><td class="px-6 py-4">@if (canManage(member)) { <div class="flex flex-wrap gap-2"><button type="button" class="btn btn-ghost btn-xs" [disabled]="busy()" (click)="changeStatus(member)">{{ member.status === 'active' ? 'Suspend' : 'Reactivate' }}</button><button type="button" class="btn btn-ghost btn-xs text-error" [disabled]="busy()" (click)="confirmRemove(member)">Remove</button>@if (org.role === 'owner' && !org.isPersonal && member.status === 'active') { <button type="button" class="btn btn-ghost btn-xs" [disabled]="busy()" (click)="confirmTransfer(member)">Make owner</button> }</div> }</td></tr> }</tbody></table></div> }
+        </section>
+      }
+
+      @if (tab() === 'invitations' && canEdit()) {
+        <section class="mt-6 rounded-2xl border border-border p-6"><h2 class="font-semibold text-ink">Invite to {{ org.name }}</h2><p class="mt-2 text-sm text-ink/55">Pending invitations reserve a seat until accepted, declined, cancelled, or expired. The expiration date is included in the invitation email.</p>
+          @if (org.teamMemberCount >= org.limits.maxTeamMembers) { <p class="mt-4 rounded-xl bg-primary/5 p-4 text-sm text-ink/65">All {{ org.limits.maxTeamMembers }} seats are occupied or reserved. Release a seat before inviting someone. Upgrades are currently unavailable.</p> }
+          <form class="mt-5 grid items-end gap-3 sm:grid-cols-[1fr_auto_auto]" (ngSubmit)="sendInvitation()"><div><label for="invite-email" class="form-label">Email address</label><input id="invite-email" name="inviteEmail" type="email" class="form-input" [(ngModel)]="inviteEmail" required maxlength="255" /></div><div><label for="invite-role" class="form-label">Role</label><select id="invite-role" name="inviteRole" class="form-input" [(ngModel)]="inviteRole">@if (org.role === 'owner') { <option value="admin">Admin</option> }<option value="member">Member</option><option value="viewer">Viewer</option></select></div><button type="submit" class="btn btn-primary" [disabled]="busy() || !inviteEmail.trim() || org.teamMemberCount >= org.limits.maxTeamMembers">Send invitation</button></form>
+        </section>
+        <section class="mt-6 rounded-2xl border border-border p-6"><h2 class="font-semibold text-ink">Invitation history</h2><div class="mt-4 divide-y divide-border">@for (invite of outgoing(); track invite.id) { <div class="flex flex-wrap items-center justify-between gap-3 py-4"><div><p class="text-sm text-ink">{{ invite.email }}</p><p class="mt-1 text-xs text-ink/55"><span class="capitalize">{{ invite.role }} · {{ invite.status }}</span> · Expires {{ invite.expiresAt | date:'medium' }}</p></div>@if (invite.status === 'pending' && (org.role === 'owner' || invite.role !== 'admin')) { <button type="button" class="btn btn-ghost btn-sm" [disabled]="busy()" (click)="cancelInvitation(invite)">Cancel invitation</button> }</div> } @empty { <p class="py-4 text-sm text-ink/55">No invitations sent yet.</p> }</div></section>
+      }
     } @else if (loading() || organizationStore.loading()) {
       <div class="mt-8 space-y-6" aria-label="Loading organization details" aria-busy="true"><div class="h-32 animate-pulse rounded-2xl bg-surface-raised"></div><div class="grid gap-5 md:grid-cols-3"><div class="h-40 animate-pulse rounded-2xl bg-surface-raised"></div><div class="h-40 animate-pulse rounded-2xl bg-surface-raised"></div><div class="h-40 animate-pulse rounded-2xl bg-surface-raised"></div></div></div>
     } @else if (!loadError() && !organizationStore.error()) {

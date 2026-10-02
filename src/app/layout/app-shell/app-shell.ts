@@ -76,6 +76,7 @@ export class AppShell {
       if (isRealSwitch) {
         this.emailStore.closeMailbox();
         this.mailboxStore.reset();
+        if (this.router.url.startsWith('/mailbox/')) void this.router.navigateByUrl('/mailboxes');
       }
       if (organizationId) {
         void this.mailboxStore.loadForOrganization(organizationId);

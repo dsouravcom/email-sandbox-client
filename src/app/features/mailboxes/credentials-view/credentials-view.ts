@@ -8,6 +8,7 @@ import { getApiErrorMessage } from '../../../core/http/api-error';
 import { Toast } from '../../../core/notifications/toast';
 import { CopyButton } from '../../../shared/ui/copy-button/copy-button';
 import { ConfirmDialog } from '../../../shared/ui/confirm-dialog/confirm-dialog';
+import { OrganizationStore } from '../../../core/organizations/organization-store';
 
 interface RevealedSecret {
   username: string;
@@ -39,6 +40,7 @@ const LANGUAGES: { id: CodeLanguage; label: string }[] = [
   templateUrl: './credentials-view.html',
 })
 export class CredentialsView {
+  protected readonly organizationStore = inject(OrganizationStore);
   private readonly credentialApi = inject(CredentialApi);
   private readonly mailboxStore = inject(MailboxStore);
   private readonly toast = inject(Toast);

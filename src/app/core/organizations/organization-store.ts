@@ -10,10 +10,7 @@ const CURRENT_ORGANIZATION_KEY = 'current-organization-id';
 /**
  * The signed-in user's organizations and which one is currently active.
  *
- * The API has no "create organization" endpoint today — an organization is
- * only ever created automatically at email verification — so this store
- * never exposes one either; see `docs` in the mailbox/organization-settings
- * components for where that would plug in if the API grows one.
+ * Organization creation and invitations are managed from the organization page.
  */
 @Service()
 export class OrganizationStore {
@@ -32,6 +29,8 @@ export class OrganizationStore {
   readonly currentOrganization = computed(
     () => this._organizations().find((org) => org.id === this._currentOrganizationId()) ?? null,
   );
+  readonly canManage = computed(() => ['owner', 'admin'].includes(this.currentOrganization()?.role ?? ''));
+  readonly canManageEmails = computed(() => ['owner', 'admin', 'member'].includes(this.currentOrganization()?.role ?? ''));
 
   /** Fetches every organization the user belongs to and picks the active one (persisted, falling back to the first). */
   async loadOrganizations(): Promise<void> {

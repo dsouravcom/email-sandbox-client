@@ -36,6 +36,7 @@
     </a>
   </td>
   <td class="w-px">
+    @if (canManage()) {
     <div class="dropdown dropdown-top dropdown-end">
       <div tabindex="0" role="button" class="btn btn-ghost btn-sm btn-square" aria-label="Mailbox actions">
         <ng-icon name="lucideMoreVertical" size="16" />
@@ -45,5 +46,6 @@
         <li><button type="button" class="text-error" (click)="delete.emit(mailbox())">Delete</button></li>
       </ul>
     </div>
+    }
   </td>
 </tr>

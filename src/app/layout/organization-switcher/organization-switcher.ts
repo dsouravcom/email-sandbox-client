@@ -1,15 +1,14 @@
 import { Component, inject } from '@angular/core';
 import { NgIcon } from '@ng-icons/core';
+import { RouterLink } from '@angular/router';
 import { OrganizationStore } from '../../core/organizations/organization-store';
 
 /**
- * The API has no "create organization" endpoint — an organization is only
- * ever created automatically at email verification — so unlike a typical
- * multi-tenant switcher, this one never offers to create one.
+ * Switch between owned and joined organizations or open management.
  */
 @Component({
   selector: 'app-organization-switcher',
-  imports: [NgIcon],
+  imports: [NgIcon, RouterLink],
   templateUrl: './organization-switcher.html',
 })
 export class OrganizationSwitcher {

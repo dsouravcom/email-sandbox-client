@@ -1,6 +1,7 @@
 import { computed, inject, Service, signal } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
 import { AuthApi } from './auth-api';
+import { Theme } from '../theme/theme';
 import {
   AuthResponse,
   ProvisioningResult,
@@ -19,6 +20,7 @@ import {
 @Service()
 export class AuthStore {
   private readonly api = inject(AuthApi);
+  private readonly theme = inject(Theme);
 
   private readonly _user = signal<User | null>(null);
   private readonly _accessToken = signal<string | null>(null);
@@ -82,6 +84,12 @@ export class AuthStore {
     this._lastProvisioning.set(null);
   }
 
+  updateUser(user: User): void {
+    if (user.id !== this._user()?.id) return;
+    this._user.set(user);
+    if (user.preferences) this.theme.setPreference(user.preferences.theme);
+  }
+
   /**
    * Reads and clears the one-time provisioning info from the last sign-in
    * (default org/mailbox/SMTP credential). `null` once read, and always
@@ -96,6 +104,7 @@ export class AuthStore {
   private setSession({ accessToken, user, provisioning }: AuthResponse): void {
     this._accessToken.set(accessToken);
     this._user.set(user);
+    if (user.preferences) this.theme.setPreference(user.preferences.theme);
     if (provisioning) {
       this._lastProvisioning.set(provisioning);
     }

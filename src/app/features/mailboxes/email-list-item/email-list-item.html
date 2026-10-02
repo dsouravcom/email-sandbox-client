@@ -7,7 +7,7 @@
     <span class="truncate text-sm" [class]="email().read ? 'text-ink/70' : 'font-semibold text-ink'">
       {{ email().from?.name || email().from?.address || '(unknown sender)' }}
     </span>
-    <span class="shrink-0 text-xs text-ink/40">{{ email().receivedAt | date: 'short' }}</span>
+    <span class="shrink-0 text-xs text-ink/40">{{ email().receivedAt | date: preferences.dateFormat():preferences.timezone() }}</span>
   </div>
 
   <div class="flex items-center gap-1.5">

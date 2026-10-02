@@ -43,7 +43,7 @@ export const routes: Routes = [
       },
       {
         path: 'profile',
-        title: 'Profile · Email Sandbox',
+        title: 'Profile & settings · Email Sandbox',
         loadComponent: () => import('./features/profile/profile/profile').then((m) => m.Profile),
       },
     ],

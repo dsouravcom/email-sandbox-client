@@ -16,6 +16,8 @@
           </button>
         </li>
       }
+      <li class="mt-2 border-t border-border pt-2"><a routerLink="/organization" [queryParams]="{ tab: 'organizations' }">Create & manage organizations</a></li>
+      <li><a routerLink="/organization" [queryParams]="{ tab: 'invitations' }">Your invitations</a></li>
     </ul>
   </div>
 } @else {

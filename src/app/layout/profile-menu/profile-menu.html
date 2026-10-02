@@ -25,11 +25,13 @@
       </a>
     </li>
     <li>
-      <a routerLink="/organization" (click)="closeMenu()">
+      <a routerLink="/profile" [queryParams]="{ tab: 'preferences' }" (click)="closeMenu()">
         <ng-icon name="lucideSettings" size="16" />
-        Settings
+        Account settings
       </a>
     </li>
+    <li><a routerLink="/profile" [queryParams]="{ tab: 'security' }" (click)="closeMenu()"><ng-icon name="lucideShieldCheck" size="16" />Security & sessions</a></li>
+    <li><a routerLink="/organization" (click)="closeMenu()"><ng-icon name="lucideBuilding2" size="16" />Organization settings</a></li>
     <div class="my-1 h-px bg-border" role="separator"></div>
     <li>
       <button type="button" class="text-error" (click)="logout()">

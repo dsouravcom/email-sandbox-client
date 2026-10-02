@@ -1,44 +1,559 @@
-<div class="mx-auto h-full max-w-2xl overflow-y-auto px-6 py-8">
-  <h1 class="text-xl font-semibold text-ink">Profile</h1>
-
-  <div class="mt-6 rounded-box border border-border bg-surface-raised p-6">
-    @if (profile.value(); as user) {
-      <dl class="grid gap-6 sm:grid-cols-2">
-        <div>
-          <dt class="text-sm text-ink/50">Name</dt>
-          <dd class="mt-1 font-medium text-ink">{{ user.name }}</dd>
-        </div>
-        <div>
-          <dt class="text-sm text-ink/50">Email</dt>
-          <dd class="mt-1 font-medium text-ink">{{ user.email }}</dd>
-        </div>
-        <div>
-          <dt class="text-sm text-ink/50">Email status</dt>
-          <dd class="mt-1">
-            @if (user.emailVerifiedAt) {
-              <span class="badge badge-success badge-sm">Verified {{ user.emailVerifiedAt | date: 'mediumDate' }}</span>
-            } @else {
-              <span class="badge badge-warning badge-sm">Not verified</span>
-            }
-          </dd>
-        </div>
-        <div>
-          <dt class="text-sm text-ink/50">Member since</dt>
-          <dd class="mt-1 font-medium text-ink">{{ user.createdAt | date: 'longDate' }}</dd>
-        </div>
-      </dl>
-
-      <div class="mt-6 border-t border-border pt-4">
-        <p class="text-sm font-medium text-ink">Password</p>
-        <p class="mt-1 text-sm text-ink/60">
-          Resetting your password signs you out everywhere else.
+<div class="h-full overflow-y-auto">
+  <div class="mx-auto max-w-6xl px-6 py-8 lg:px-10">
+    <header class="flex flex-wrap items-start justify-between gap-4">
+      <div>
+        <p class="text-xs font-semibold uppercase tracking-wider text-primary">Your account</p>
+        <h1 class="mt-2 text-2xl font-bold tracking-tight text-ink">Profile & settings</h1>
+        <p class="mt-2 text-sm text-ink/55">
+          Manage your personal information, account security, and workspace preferences.
         </p>
-        <a routerLink="/forgot-password" class="btn btn-outline btn-sm mt-2">Reset password</a>
       </div>
-    } @else if (profileError(); as message) {
-      <app-error-state [message]="message" (retry)="profile.reload()" />
-    } @else {
-      <app-skeleton [lines]="4" />
+      <button
+        type="button"
+        class="btn btn-ghost btn-sm gap-2"
+        [disabled]="loading() || busy()"
+        (click)="reload()"
+      >
+        <ng-icon name="lucideRefreshCw" size="15" />Refresh
+      </button>
+    </header>
+    <nav
+      class="mt-7 flex gap-1 overflow-x-auto border-b border-border"
+      aria-label="Account sections"
+    >
+      @for (item of tabs; track item) {
+        <button
+          type="button"
+          class="shrink-0 border-b-2 px-4 py-3 text-sm capitalize"
+          [class.border-primary]="tab() === item"
+          [class.text-primary]="tab() === item"
+          [class.border-transparent]="tab() !== item"
+          [attr.aria-current]="tab() === item ? 'page' : null"
+          (click)="selectTab(item)"
+        >
+          {{ item }}
+        </button>
+      }
+    </nav>
+    @if (loadError(); as message) {
+      <div class="mt-6 rounded-xl border border-error/25 p-5" role="alert">
+        <p class="text-sm text-error">{{ message }}</p>
+        <button type="button" class="btn btn-outline btn-sm mt-3" (click)="reload()">
+          Try again
+        </button>
+      </div>
+    }
+    @if (actionError(); as message) {
+      <p
+        class="mt-6 rounded-xl border border-error/25 bg-error/5 p-4 text-sm text-error"
+        role="alert"
+      >
+        {{ message }}
+      </p>
+    }
+    @if (loading()) {
+      <div class="mt-6 space-y-5" aria-busy="true" aria-label="Loading account">
+        <div class="h-32 animate-pulse rounded-2xl bg-surface-raised"></div>
+        <div class="h-72 animate-pulse rounded-2xl bg-surface-raised"></div>
+      </div>
+    } @else if (user(); as account) {
+      <section
+        class="mt-6 flex flex-wrap items-center justify-between gap-5 rounded-2xl border border-primary/20 bg-surface-raised/50 p-6"
+      >
+        <div class="flex items-center gap-4">
+          <div
+            class="grid h-14 w-14 shrink-0 place-items-center rounded-2xl bg-primary/15 text-lg font-semibold text-primary"
+          >
+            {{ initials() }}
+          </div>
+          <div>
+            <h2 class="text-lg font-semibold text-ink">{{ account.name }}</h2>
+            <p class="mt-1 break-all text-sm text-ink/55">{{ account.email }}</p>
+          </div>
+        </div>
+        <div class="flex flex-wrap gap-2">
+          <span
+            class="rounded-full px-3 py-1 text-xs"
+            [class.bg-success/10]="account.emailVerifiedAt"
+            [class.text-success]="account.emailVerifiedAt"
+            >{{ account.emailVerifiedAt ? 'Email verified' : 'Email not verified' }}</span
+          ><span class="rounded-full bg-surface px-3 py-1 text-xs text-ink/55"
+            >Joined {{ account.createdAt | date: 'MMM y' }}</span
+          >
+        </div>
+      </section>
+      @if (tab() === 'profile') {
+        <div class="mt-6 grid gap-6 lg:grid-cols-[1.4fr_1fr]">
+          <section class="rounded-2xl border border-border p-6">
+            <h2 class="font-semibold text-ink">Personal information</h2>
+            <p class="mt-1 text-sm text-ink/55">
+              Your name appears in organization member lists. Other details are kept in your account
+              profile.
+            </p>
+            <form #profileForm="ngForm" class="mt-6 space-y-5" (ngSubmit)="saveProfile()">
+              <div>
+                <label for="profile-name" class="form-label">Full name *</label
+                ><input
+                  id="profile-name"
+                  name="name"
+                  class="form-input"
+                  [(ngModel)]="profileValues.name"
+                  required
+                  minlength="2"
+                  maxlength="100"
+                  autocomplete="name"
+                />
+              </div>
+              <div class="grid gap-4 sm:grid-cols-2">
+                <div>
+                  <label for="profile-company" class="form-label">Company (optional)</label
+                  ><input
+                    id="profile-company"
+                    name="company"
+                    class="form-input"
+                    [(ngModel)]="profileValues.company"
+                    maxlength="100"
+                    autocomplete="organization"
+                  />
+                </div>
+                <div>
+                  <label for="profile-title" class="form-label">Job title (optional)</label
+                  ><input
+                    id="profile-title"
+                    name="jobTitle"
+                    class="form-input"
+                    [(ngModel)]="profileValues.jobTitle"
+                    maxlength="100"
+                    autocomplete="organization-title"
+                  />
+                </div>
+              </div>
+              <div>
+                <label for="profile-bio" class="form-label">About you (optional)</label
+                ><textarea
+                  id="profile-bio"
+                  name="bio"
+                  class="form-input min-h-28 resize-y"
+                  [(ngModel)]="profileValues.bio"
+                  maxlength="500"
+                  rows="4"
+                ></textarea>
+                <p class="mt-1 text-right text-xs text-ink/40">
+                  {{ profileValues.bio.length }} / 500
+                </p>
+              </div>
+              <button
+                type="submit"
+                class="btn btn-primary btn-sm"
+                [disabled]="busy() || profileForm.invalid || profileValues.name.trim().length < 2"
+              >
+                {{ busy() ? 'Saving…' : 'Save profile' }}
+              </button>
+            </form>
+          </section>
+          <aside class="space-y-6">
+            <section class="rounded-2xl border border-border p-6">
+              <h2 class="font-semibold text-ink">Account details</h2>
+              <dl class="mt-5 space-y-5 text-sm">
+                <div>
+                  <dt class="text-ink/50">Sign-in email</dt>
+                  <dd class="mt-1 break-all text-ink">{{ account.email }}</dd>
+                  <p class="mt-2 text-xs leading-5 text-ink/45">
+                    Your verified email connects sign-in codes and organization invitations. Email
+                    changes are currently unavailable.
+                  </p>
+                </div>
+                <div>
+                  <dt class="text-ink/50">Member since</dt>
+                  <dd class="mt-1 text-ink">{{ account.createdAt | date: 'longDate' }}</dd>
+                </div>
+                <div>
+                  <dt class="text-ink/50">Email verified</dt>
+                  <dd class="mt-1 text-ink">
+                    {{
+                      account.emailVerifiedAt
+                        ? (account.emailVerifiedAt | date: 'medium')
+                        : 'Not verified'
+                    }}
+                  </dd>
+                </div>
+                <div>
+                  <dt class="text-ink/50">Account ID</dt>
+                  <dd class="mt-2 flex items-center justify-between gap-2">
+                    <code class="break-all text-xs text-ink/65">{{ account.id }}</code
+                    ><app-copy-button [value]="account.id" label="account ID" />
+                  </dd>
+                </div>
+              </dl>
+            </section>
+            <section class="rounded-2xl border border-border p-6">
+              <h2 class="font-semibold text-ink">Workspace access</h2>
+              <p class="mt-3 text-3xl font-bold text-ink">
+                {{ organizations.organizations().length }}
+              </p>
+              <p class="mt-1 text-sm text-ink/55">Organizations you can access</p>
+              <button
+                type="button"
+                class="btn btn-ghost btn-sm mt-4"
+                (click)="selectTab('workspaces')"
+              >
+                View workspaces →
+              </button>
+            </section>
+          </aside>
+        </div>
+      }
+      @if (tab() === 'security') {
+        <div class="mt-6 grid gap-6 lg:grid-cols-[1.4fr_1fr]">
+          <section class="rounded-2xl border border-border p-6">
+            <h2 class="flex items-center gap-2 font-semibold text-ink">
+              <ng-icon name="lucideKeyRound" size="18" />Change password
+            </h2>
+            <p class="mt-2 text-sm text-ink/55">
+              Confirm your current password to set a new one. Other devices will be signed out; this
+              session stays active.
+            </p>
+            <form #passwordForm="ngForm" class="mt-6 space-y-4" (ngSubmit)="changePassword()">
+              <div>
+                <label for="current-password" class="form-label">Current password</label
+                ><input
+                  id="current-password"
+                  name="currentPassword"
+                  class="form-input"
+                  [type]="passwordVisible() ? 'text' : 'password'"
+                  [(ngModel)]="passwords.current"
+                  required
+                  maxlength="128"
+                  autocomplete="current-password"
+                />
+              </div>
+              <div>
+                <label for="new-password" class="form-label">New password</label
+                ><input
+                  id="new-password"
+                  name="newPassword"
+                  class="form-input"
+                  [type]="passwordVisible() ? 'text' : 'password'"
+                  [(ngModel)]="passwords.next"
+                  required
+                  minlength="8"
+                  maxlength="128"
+                  autocomplete="new-password"
+                />
+                <p class="mt-2 text-xs text-ink/45">
+                  Use 8–128 characters. A unique passphrase works well.
+                </p>
+              </div>
+              <div>
+                <label for="confirm-password" class="form-label">Confirm new password</label
+                ><input
+                  id="confirm-password"
+                  name="confirmPassword"
+                  class="form-input"
+                  [type]="passwordVisible() ? 'text' : 'password'"
+                  [(ngModel)]="passwords.confirmation"
+                  required
+                  maxlength="128"
+                  autocomplete="new-password"
+                />
+              </div>
+              <button
+                type="button"
+                class="text-xs text-ink/55 hover:text-primary"
+                [attr.aria-pressed]="passwordVisible()"
+                (click)="passwordVisible.set(!passwordVisible())"
+              >
+                {{ passwordVisible() ? 'Hide passwords' : 'Show passwords' }}
+              </button>
+              <div>
+                <button
+                  type="submit"
+                  class="btn btn-primary btn-sm"
+                  [disabled]="busy() || passwordForm.invalid"
+                >
+                  Update password
+                </button>
+              </div>
+            </form>
+          </section>
+          <aside class="space-y-6">
+            <section class="rounded-2xl border border-border p-6">
+              <h2 class="flex items-center gap-2 font-semibold text-ink">
+                <ng-icon name="lucideShieldCheck" size="18" />Sign-in protection
+              </h2>
+              <p class="mt-3 text-sm leading-6 text-ink/60">
+                Signing in requires your password followed by a one-time code sent to your verified
+                email address.
+              </p>
+              <div class="mt-4 rounded-xl bg-success/5 p-4 text-xs text-ink/55">
+                Email sign-in codes are enabled by the platform. Authenticator-app two-factor
+                authentication is currently unavailable.
+              </div>
+            </section>
+            <section class="rounded-2xl border border-border p-6">
+              <h2 class="font-semibold text-ink">This device</h2>
+              <p class="mt-2 text-sm text-ink/55">
+                Sign out of your current browser when you're finished on a shared device.
+              </p>
+              <button
+                type="button"
+                class="btn btn-outline btn-sm mt-4"
+                [disabled]="busy()"
+                (click)="signOut()"
+              >
+                Sign out
+              </button>
+            </section>
+          </aside>
+        </div>
+        <section class="mt-6 overflow-hidden rounded-2xl border border-border">
+          <div class="flex flex-wrap items-center justify-between gap-4 border-b border-border p-6">
+            <div>
+              <h2 class="font-semibold text-ink">Active sessions</h2>
+              <p class="mt-1 text-sm text-ink/55">
+                Review browsers signed in to your account and revoke their access.
+              </p>
+            </div>
+            <div class="flex gap-2">
+              <button
+                type="button"
+                class="btn btn-ghost btn-sm"
+                [disabled]="sessionsLoading() || busy()"
+                (click)="loadSessions()"
+              >
+                Refresh list
+              </button>
+              @if (otherSessionCount()) {
+                <button
+                  type="button"
+                  class="btn btn-outline btn-sm"
+                  [disabled]="busy()"
+                  (click)="requestRevoke('others')"
+                >
+                  Sign out other sessions
+                </button>
+              }
+            </div>
+          </div>
+          @if (sessionsError(); as message) {
+            <p class="p-6 text-sm text-error" role="alert">{{ message }}</p>
+          } @else if (sessionsLoading()) {
+            <p class="p-6 text-sm text-ink/55">Loading sessions…</p>
+          } @else {
+            <div class="divide-y divide-border">
+              @for (session of sessions(); track session.id) {
+                <div class="flex flex-wrap items-start justify-between gap-4 p-6">
+                  <div class="min-w-0">
+                    <p class="flex flex-wrap items-center gap-3 text-sm font-medium text-ink">
+                      {{ deviceLabel(session.userAgent) }}
+                      @if (session.current) {
+                        <span class="rounded-full bg-primary/10 px-2 py-1 text-xs text-primary"
+                          >This session</span
+                        >
+                      }
+                    </p>
+                    <p class="mt-2 text-xs text-ink/55">
+                      IP: {{ session.ipAddress || 'Unavailable' }} · Signed in
+                      {{ session.createdAt | date: 'medium' }}
+                    </p>
+                    <p class="mt-1 text-xs text-ink/45">
+                      Last refreshed {{ session.lastActiveAt | date: 'medium' }} · Expires
+                      {{ session.expiresAt | date: 'medium' }}
+                    </p>
+                    <details class="mt-3 text-xs text-ink/45">
+                      <summary class="cursor-pointer">Browser details</summary>
+                      <p class="mt-2 max-w-xl break-all">
+                        {{ session.userAgent || 'User agent unavailable' }}
+                      </p>
+                    </details>
+                  </div>
+                  @if (!session.current) {
+                    <button
+                      type="button"
+                      class="btn btn-ghost btn-sm text-error"
+                      [disabled]="busy()"
+                      (click)="requestRevoke(session)"
+                    >
+                      Sign out session
+                    </button>
+                  }
+                </div>
+              } @empty {
+                <p class="p-6 text-sm text-ink/55">No active sessions found.</p>
+              }
+            </div>
+          }
+        </section>
+      }
+      @if (tab() === 'preferences') {
+        <form #preferencesForm="ngForm" class="mt-6 space-y-6" (ngSubmit)="savePreferences()">
+          <section class="rounded-2xl border border-border p-6">
+            <h2 class="flex items-center gap-2 font-semibold text-ink">
+              <ng-icon name="lucideMonitor" size="18" />Appearance
+            </h2>
+            <p class="mt-2 text-sm text-ink/55">
+              Choose the theme used when you sign in. System follows your device's color preference.
+            </p>
+            <div class="mt-5 grid gap-3 sm:grid-cols-3">
+              @for (choice of ['light', 'dark', 'system']; track choice) {
+                <label
+                  class="flex cursor-pointer items-center gap-3 rounded-xl border border-border bg-surface-raised p-5"
+                  ><input
+                    type="radio"
+                    name="theme"
+                    class="radio radio-primary radio-sm"
+                    [value]="choice"
+                    [(ngModel)]="preferenceValues.theme"
+                  /><span class="text-sm capitalize text-ink">{{ choice }}</span></label
+                >
+              }
+            </div>
+          </section>
+          <section class="rounded-2xl border border-border p-6">
+            <h2 class="flex items-center gap-2 font-semibold text-ink">
+              <ng-icon name="lucideClock" size="18" />Email timestamps
+            </h2>
+            <p class="mt-2 text-sm text-ink/55">
+              Control how received timestamps appear in the email list and preview.
+            </p>
+            <div class="mt-5 grid gap-5 sm:grid-cols-2">
+              <div>
+                <label for="timestamp-zone" class="form-label">Time zone</label
+                ><select
+                  id="timestamp-zone"
+                  name="timezone"
+                  class="form-input"
+                  [(ngModel)]="preferenceValues.timestampTimezone"
+                >
+                  <option value="local">Your device's local time</option>
+                  <option value="UTC">UTC</option>
+                </select>
+              </div>
+              <div>
+                <label for="timestamp-format" class="form-label">Date & time format</label
+                ><select
+                  id="timestamp-format"
+                  name="dateFormat"
+                  class="form-input"
+                  [(ngModel)]="preferenceValues.timestampFormat"
+                >
+                  <option value="medium">Detailed — month name, date & time</option>
+                  <option value="short">Compact — numeric date & time</option>
+                </select>
+              </div>
+            </div>
+            <p class="mt-4 rounded-xl bg-surface-raised p-4 text-sm text-ink/60">
+              Example:
+              {{
+                account.createdAt
+                  | date
+                    : preferenceValues.timestampFormat
+                    : (preferenceValues.timestampTimezone === 'UTC' ? 'UTC' : undefined)
+              }}
+            </p>
+          </section>
+          <section class="rounded-2xl border border-border p-6">
+            <h2 class="flex items-center gap-2 font-semibold text-ink">
+              <ng-icon name="lucideMailOpen" size="18" />Inbox behavior
+            </h2>
+            <label class="mt-5 flex cursor-pointer items-start justify-between gap-5"
+              ><div>
+                <span class="text-sm font-medium text-ink"
+                  >Automatically mark opened emails as read</span
+                >
+                <p class="mt-1 text-xs leading-5 text-ink/55">
+                  Turn off to keep unread status until you mark a message manually. Viewer roles
+                  always keep emails unchanged.
+                </p>
+              </div>
+              <input
+                type="checkbox"
+                name="autoMarkRead"
+                class="toggle toggle-primary shrink-0"
+                [(ngModel)]="preferenceValues.autoMarkRead"
+            /></label>
+          </section>
+          <div class="flex flex-wrap items-center gap-3">
+            <button
+              type="submit"
+              class="btn btn-primary btn-sm"
+              [disabled]="busy() || preferencesForm.invalid"
+            >
+              Save preferences</button
+            ><button
+              type="button"
+              class="btn btn-ghost btn-sm"
+              [disabled]="busy()"
+              (click)="resetPreferences()"
+            >
+              Restore defaults
+            </button>
+            <p class="text-xs text-ink/45">Save to apply changes across future sign-ins.</p>
+          </div>
+        </form>
+      }
+      @if (tab() === 'workspaces') {
+        <section class="mt-6 rounded-2xl border border-border p-6">
+          <div class="flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <h2 class="font-semibold text-ink">Your organizations</h2>
+              <p class="mt-1 text-sm text-ink/55">
+                Your role and plan are assigned separately in each organization.
+              </p>
+            </div>
+            <a
+              routerLink="/organization"
+              [queryParams]="{ tab: 'organizations' }"
+              class="btn btn-outline btn-sm"
+              >Create or manage</a
+            >
+          </div>
+          <div class="mt-5 grid gap-4 sm:grid-cols-2">
+            @for (org of organizations.organizations(); track org.id) {
+              <div class="rounded-xl border border-border bg-surface-raised p-5">
+                <h3 class="font-medium text-ink">{{ org.name }}</h3>
+                <p class="mt-2 text-xs capitalize text-ink/55">
+                  {{ org.role }} · {{ org.plan }} plan ·
+                  {{ org.isPersonal ? 'Personal' : 'Shared' }}
+                </p>
+                <button
+                  type="button"
+                  class="btn btn-ghost btn-sm mt-4"
+                  (click)="openOrganization(org.id)"
+                >
+                  Open organization →
+                </button>
+              </div>
+            } @empty {
+              <p class="text-sm text-ink/55">No accessible organizations loaded.</p>
+            }
+          </div>
+        </section>
+        <section class="mt-6 rounded-2xl border border-border p-6">
+          <h2 class="font-semibold text-ink">Organization invitations</h2>
+          <p class="mt-2 text-sm text-ink/55">
+            Accept or decline invitations using your verified email address.
+          </p>
+          <a
+            routerLink="/organization"
+            [queryParams]="{ tab: 'invitations' }"
+            class="btn btn-ghost btn-sm mt-4"
+            >View invitations →</a
+          >
+        </section>
+      }
     }
   </div>
 </div>
+<app-confirm-dialog
+  #sessionDialog
+  title="Sign out sessions"
+  [message]="
+    revoking() === 'others'
+      ? 'Sign out every other active session? This browser will remain signed in.'
+      : 'Sign out this session? That browser will need to sign in again.'
+  "
+  confirmLabel="Sign out"
+  [danger]="true"
+  (confirmed)="revokeConfirmed()"
+/>
