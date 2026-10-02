@@ -94,14 +94,14 @@ describe('LandingPage', () => {
     const component = fixture.componentInstance;
 
     expect((component as any).heroCodeTab()).toBe('node');
-    expect((component as any).activeHeroSnippet().code).toContain('sandbox-smtp.email.dsourav.com');
+    expect((component as any).activeHeroSnippet().code).toContain('smtp.email.dsourav.com');
     expect((component as any).activeHeroSnippet().code).toContain('2525');
 
     (component as any).heroCodeTab.set('curl');
-    expect((component as any).activeHeroSnippet().code).toContain('smtp://sandbox-smtp.email.dsourav.com:2525');
+    expect((component as any).activeHeroSnippet().code).toContain('smtp://smtp.email.dsourav.com:2525');
 
     (component as any).heroCodeTab.set('python');
-    expect((component as any).activeHeroSnippet().code).toContain('sandbox-smtp.email.dsourav.com');
+    expect((component as any).activeHeroSnippet().code).toContain('smtp.email.dsourav.com');
   });
 
   it('should select email and toggle HTML and Text preview tabs', () => {

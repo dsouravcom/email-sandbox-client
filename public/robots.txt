@@ -1,0 +1,9 @@
+# Public content is available to search and AI crawlers that respect robots.txt.
+# The wildcard policy also applies to AI search and training crawlers.
+# Authentication protects account and inbox data.
+# Allow account HTML shells to be crawled so their noindex directives are visible.
+User-agent: *
+Allow: /
+Disallow: /api/
+
+Sitemap: https://email.dsourav.com/sitemap.xml

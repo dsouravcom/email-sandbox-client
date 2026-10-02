@@ -6,11 +6,28 @@ import {
 } from '@angular/ssr/node';
 import express from 'express';
 import { join } from 'node:path';
+import { RUNTIME_SITE_URL } from './app/core/http/runtime-config.generated';
 
 const browserDistFolder = join(import.meta.dirname, '../browser');
 
 const app = express();
-const angularApp = new AngularNodeAppEngine();
+const angularApp = new AngularNodeAppEngine({
+  allowedHosts: [new URL(RUNTIME_SITE_URL).hostname, 'localhost', '127.0.0.1'],
+});
+const privatePage =
+  /^\/(?:mailboxes|mailbox|organization|profile|login|register|verify-email|login-verify|forgot-password|reset-password)(?:\/|$)/;
+app.disable('x-powered-by');
+app.use((req, res, next) => {
+  if (req.path === '/docs/') {
+    res.redirect(308, '/docs');
+    return;
+  }
+  if (privatePage.test(req.path)) {
+    res.setHeader('X-Robots-Tag', 'noindex, nofollow');
+    res.setHeader('Cache-Control', 'private, no-store');
+  }
+  next();
+});
 
 /**
  * Example Express Rest API endpoints can be defined here.
@@ -29,9 +46,16 @@ const angularApp = new AngularNodeAppEngine();
  */
 app.use(
   express.static(browserDistFolder, {
-    maxAge: '1y',
+    maxAge: '1h',
     index: false,
     redirect: false,
+    setHeaders(res, path) {
+      if (/\.(?:html|txt|xml|md)$/.test(path))
+        res.setHeader('Cache-Control', 'public, max-age=0, must-revalidate');
+      if (/-[A-Za-z0-9_-]{8,}\.(?:js|css)$/.test(path))
+        res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+      if (/\.(?:txt|md)$/.test(path)) res.setHeader('Content-Type', 'text/plain; charset=utf-8');
+    },
   }),
 );
 
@@ -41,9 +65,7 @@ app.use(
 app.use((req, res, next) => {
   angularApp
     .handle(req)
-    .then((response) =>
-      response ? writeResponseToNodeResponse(response, res) : next(),
-    )
+    .then((response) => (response ? writeResponseToNodeResponse(response, res) : next()))
     .catch(next);
 });
 

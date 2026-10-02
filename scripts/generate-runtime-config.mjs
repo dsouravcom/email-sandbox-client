@@ -1,4 +1,4 @@
-import { writeFileSync } from 'node:fs';
+import { readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -36,11 +36,15 @@ if (!turnstileSiteKey) {
 
 const outDir = join(dirname(fileURLToPath(import.meta.url)), '..', 'src', 'app', 'core', 'http');
 const outFile = join(outDir, 'runtime-config.generated.ts');
+const site = JSON.parse(readFileSync(new URL('../src/app/core/seo/site-content.json', import.meta.url), 'utf8'));
+const siteUrl = new URL(process.env.SITE_URL || site.origin);
+if (siteUrl.protocol !== 'https:' || siteUrl.pathname !== '/' || siteUrl.search || siteUrl.hash || siteUrl.username || siteUrl.password) throw new Error('SITE_URL must be an HTTPS origin without a path, query, or credentials.');
 
 writeFileSync(
   outFile,
   '// AUTO-GENERATED from .env by scripts/generate-runtime-config.mjs.\n' +
     '// Do not edit by hand and do not commit this file.\n' +
     `export const RUNTIME_API_BASE_URL = ${JSON.stringify(apiBaseUrl)};\n` +
+    `export const RUNTIME_SITE_URL = ${JSON.stringify(siteUrl.origin)};\n` +
     `export const RUNTIME_TURNSTILE_SITE_KEY = ${JSON.stringify(turnstileSiteKey)};\n`,
 );

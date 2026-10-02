@@ -8,7 +8,8 @@ import {
   provideBrowserGlobalErrorListeners,
 } from '@angular/core';
 import { provideClientHydration } from '@angular/platform-browser';
-import { provideRouter, withComponentInputBinding } from '@angular/router';
+import { provideRouter, TitleStrategy, withComponentInputBinding } from '@angular/router';
+import { SeoTitleStrategy } from './core/seo/seo-title-strategy';
 import { provideIcons } from '@ng-icons/core';
 import { routes } from './app.routes';
 import { authInterceptor } from './core/auth/auth-interceptor';
@@ -19,6 +20,7 @@ export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
     provideRouter(routes, withComponentInputBinding()),
+    { provide: TitleStrategy, useClass: SeoTitleStrategy },
     provideClientHydration(),
     // HttpClient is available by default; this adds the auth interceptor to it.
     provideHttpClient(withInterceptors([authInterceptor])),

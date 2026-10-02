@@ -2,6 +2,7 @@
   <!-- ========================================================================= -->
   <!-- 1. NAVBAR (NO v1.0 BADGE) -->
   <!-- ========================================================================= -->
+  <a href="#main-content" class="sr-only focus:not-sr-only focus:block focus:p-4">Skip to main content</a>
   <header class="sticky top-0 z-50 w-full border-b border-border/80 bg-surface/85 backdrop-blur-md transition-colors">
     <div class="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
       <!-- Bespoke SVG Logo & Brand Name -->
@@ -10,7 +11,7 @@
       </a>
 
       <!-- Navigation Links -->
-      <nav class="hidden md:flex items-center gap-7 text-xs font-semibold uppercase tracking-wider text-ink/65">
+      <nav aria-label="Main navigation" class="hidden xl:flex items-center gap-7 text-xs font-semibold uppercase tracking-wider text-ink/65">
         <a href="#demo" class="hover:text-primary transition-colors">Interactive Demo</a>
         <a href="#features" class="hover:text-primary transition-colors">Features</a>
         <a href="#comparison" class="hover:text-primary transition-colors">Comparison</a>
@@ -22,7 +23,7 @@
       <div class="flex items-center gap-3">
         <app-theme-switcher />
 
-        @if (auth.isAuthenticated()) {
+        @if (navigationReady() && auth.isAuthenticated()) {
           <a
             routerLink="/mailboxes"
             class="btn btn-primary btn-sm gap-2 shadow-xs font-semibold specular-highlight"
@@ -53,6 +54,7 @@
   <!-- ========================================================================= -->
   <!-- 2. REDESIGNED HERO SECTION WITH CODE BOX ON THE RIGHT -->
   <!-- ========================================================================= -->
+  <main id="main-content">
   <section class="relative overflow-hidden pt-12 pb-16 md:pt-20 md:pb-24 bg-radial-hero bg-grid-subtle border-b border-border/60">
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative z-10">
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-center">
@@ -63,7 +65,7 @@
             <span class="h-2 w-2 rounded-full bg-success"></span>
             <span>Safe Email Testing for Developers & Teams</span>
             <span class="text-ink/30">•</span>
-            <span class="text-primary font-semibold">Zero Real Inboxes Emailed</span>
+            <span class="text-primary font-semibold">SMTP capture without external delivery</span>
           </div>
 
           <!-- Main Headline -->
@@ -76,12 +78,12 @@
 
           <!-- User-Centered Description -->
           <p class="mt-5 text-base sm:text-lg text-ink/70 leading-relaxed max-w-2xl">
-            Capture all outgoing emails from your development and staging apps before they reach real users. Inspect how emails render on mobile and desktop, check confirmation links and verification codes, and catch layout issues with confidence.
+            Capture emails sent to your sandbox from your development and staging apps before they reach real users. Inspect how emails render on mobile and desktop, check confirmation links and verification codes, and catch layout issues with confidence.
           </p>
 
           <!-- Action Buttons -->
           <div class="mt-8 flex flex-col sm:flex-row items-stretch sm:items-center gap-3.5">
-            @if (auth.isAuthenticated()) {
+            @if (navigationReady() && auth.isAuthenticated()) {
               <a
                 routerLink="/mailboxes"
                 class="btn btn-primary btn-md px-8 gap-2 shadow-sm font-semibold text-base specular-highlight"
@@ -110,7 +112,7 @@
           <!-- Quick Trust Note -->
           <p class="mt-5 text-xs text-ink/50 flex items-center gap-2">
             <ng-icon name="lucideCheck" class="text-success" size="15" />
-            Free tier with generous limits &bull; No credit card required &bull; Ready in 30 seconds
+            {{ plans[0].limits.emailsPerMonth | number }} test emails per month &bull; No credit card required
           </p>
         </div>
 
@@ -267,7 +269,7 @@
         </div>
 
         <!-- Simulator Body: Left List + Right Preview -->
-        <div class="grid grid-cols-1 lg:grid-cols-[320px_1fr] min-h-[580px]">
+        <div class="grid grid-cols-1 lg:grid-cols-[320px_1fr] min-h-145">
           <!-- Left Column: Email List (No Filters) -->
           <div class="border-b lg:border-b-0 lg:border-r border-[#292524] bg-[#141211] flex flex-col">
             <!-- Search Input from Screenshot -->
@@ -445,9 +447,9 @@
           <div class="h-10 w-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center mb-5">
             <ng-icon name="lucideShieldCheck" size="20" />
           </div>
-          <h3 class="text-lg font-bold text-ink mb-2">Zero Customer Email Risk</h3>
+          <h3 class="text-lg font-bold text-ink mb-2">Capture test emails safely</h3>
           <p class="text-sm text-ink/70 leading-relaxed">
-            Test with real database dumps, sign-up flows, and user lists without worrying about emails escaping. Outgoing delivery is completely disabled.
+            Point your development and staging applications at the sandbox SMTP endpoint. Messages received by the sandbox are captured for inspection and are not relayed to recipients.
           </p>
         </div>
 
@@ -643,104 +645,29 @@
   <!-- ========================================================================= -->
   <section id="faq" class="py-16 md:py-24 bg-surface">
     <div class="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
-      <div class="text-center max-w-2xl mx-auto mb-14">
-        <h2 class="text-3xl font-extrabold tracking-tight text-ink sm:text-4xl">
-          Frequently Asked Questions
-        </h2>
-        <p class="mt-3 text-base text-ink/70">
-          Everything you need to know about testing emails with Email Sandbox.
-        </p>
+      <div class="mx-auto mb-12 max-w-2xl text-center">
+        <h2 class="text-3xl font-extrabold text-ink sm:text-4xl">Email testing frequently asked questions</h2>
+        <p class="mt-3 text-base text-ink/65">SMTP setup, Free plan limits, message inspection, and team access.</p>
       </div>
-
       <div class="space-y-3">
-        <!-- FAQ 1 -->
-        <div class="rounded-xl border border-border bg-surface overflow-hidden transition-all specular-card">
-          <button
-            type="button"
-            (click)="toggleFaq(0)"
-            class="flex w-full items-center justify-between p-5 text-left font-semibold text-ink text-sm sm:text-base focus:outline-none"
-          >
-            <span>Can any email accidentally be sent to a real customer?</span>
-            <ng-icon
-              name="lucideChevronDown"
-              size="18"
-              class="text-ink/50 transition-transform duration-200"
-              [class.rotate-180]="openFaqIndex() === 0"
-            />
-          </button>
-          @if (openFaqIndex() === 0) {
-            <div class="px-5 pb-5 text-xs sm:text-sm text-ink/70 leading-relaxed border-t border-border/50 pt-3 animate-fade-in">
-              No. Email Sandbox completely disables external email relaying. Every email sent to your sandbox is safely trapped and stored only in your private testing inbox. It is physically impossible for an email to leave the platform.
+        @for (faq of faqs; track faq.question; let index = $index) {
+          <div class="overflow-hidden rounded-xl border border-border">
+            <h3>
+              <button type="button" class="flex w-full items-center justify-between gap-4 p-5 text-left text-sm font-semibold text-ink"
+                [attr.aria-expanded]="openFaqIndex() === index" [attr.aria-controls]="'faq-answer-' + index" (click)="toggleFaq(index)">
+                <span>{{ faq.question }}</span>
+                <ng-icon name="lucideChevronDown" size="18" [class.rotate-180]="openFaqIndex() === index" />
+              </button>
+            </h3>
+            <div [id]="'faq-answer-' + index" [hidden]="openFaqIndex() !== index" class="border-t border-border px-5 py-4 text-sm leading-7 text-ink/65">
+              {{ faq.answer }}
             </div>
-          }
-        </div>
-
-        <!-- FAQ 2 -->
-        <div class="rounded-xl border border-border bg-surface overflow-hidden transition-all specular-card">
-          <button
-            type="button"
-            (click)="toggleFaq(1)"
-            class="flex w-full items-center justify-between p-5 text-left font-semibold text-ink text-sm sm:text-base focus:outline-none"
-          >
-            <span>How do I connect my website or application?</span>
-            <ng-icon
-              name="lucideChevronDown"
-              size="18"
-              class="text-ink/50 transition-transform duration-200"
-              [class.rotate-180]="openFaqIndex() === 1"
-            />
-          </button>
-          @if (openFaqIndex() === 1) {
-            <div class="px-5 pb-5 text-xs sm:text-sm text-ink/70 leading-relaxed border-t border-border/50 pt-3 animate-fade-in">
-              Just copy your host (<code>sandbox-smtp.email.dsourav.com</code>), port (<code>2525</code>), username, and password into your framework's email settings or <code>.env</code> file. Works out of the box with Node.js, Python, PHP, Java, Go, and all standard email libraries.
-            </div>
-          }
-        </div>
-
-        <!-- FAQ 3 -->
-        <div class="rounded-xl border border-border bg-surface overflow-hidden transition-all specular-card">
-          <button
-            type="button"
-            (click)="toggleFaq(2)"
-            class="flex w-full items-center justify-between p-5 text-left font-semibold text-ink text-sm sm:text-base focus:outline-none"
-          >
-            <span>Are email attachments saved in the free tier?</span>
-            <ng-icon
-              name="lucideChevronDown"
-              size="18"
-              class="text-ink/50 transition-transform duration-200"
-              [class.rotate-180]="openFaqIndex() === 2"
-            />
-          </button>
-          @if (openFaqIndex() === 2) {
-            <div class="px-5 pb-5 text-xs sm:text-sm text-ink/70 leading-relaxed border-t border-border/50 pt-3 animate-fade-in">
-              In the free tier, attachments are not stored. The system verifies the attachment names and headers so you know your app sent the files, but the heavy binary content is discarded to keep your inbox fast and clean. Attachments are currently discarded on all plans.
-            </div>
-          }
-        </div>
-
-        <!-- FAQ 4 -->
-        <div class="rounded-xl border border-border bg-surface overflow-hidden transition-all specular-card">
-          <button
-            type="button"
-            (click)="toggleFaq(3)"
-            class="flex w-full items-center justify-between p-5 text-left font-semibold text-ink text-sm sm:text-base focus:outline-none"
-          >
-            <span>Can I test emails on mobile and tablet screen sizes?</span>
-            <ng-icon
-              name="lucideChevronDown"
-              size="18"
-              class="text-ink/50 transition-transform duration-200"
-              [class.rotate-180]="openFaqIndex() === 3"
-            />
-          </button>
-          @if (openFaqIndex() === 3) {
-            <div class="px-5 pb-5 text-xs sm:text-sm text-ink/70 leading-relaxed border-t border-border/50 pt-3 animate-fade-in">
-              Yes! Every received email includes built-in view switchers for Desktop, Tablet (580px), and Mobile (360px) so you can ensure your responsive styles and call-to-action buttons look great on every device.
-            </div>
-          }
-        </div>
+          </div>
+        }
       </div>
+      <p class="mt-6 text-center text-sm text-ink/55">
+        Need setup instructions? <a routerLink="/docs" class="font-medium text-primary hover:underline">Read the SMTP email testing guide</a>.
+      </p>
     </div>
   </section>
 
@@ -749,7 +676,7 @@
   <!-- ========================================================================= -->
   <section class="py-16 md:py-24 bg-surface">
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-      <div class="relative overflow-hidden rounded-3xl border border-primary/30 bg-gradient-to-b from-surface-raised via-surface to-surface-raised p-8 sm:p-16 text-center shadow-2xl specular-highlight">
+      <div class="relative overflow-hidden rounded-3xl border border-primary/30 bg-linear-to-b from-surface-raised via-surface to-surface-raised p-8 sm:p-16 text-center shadow-2xl specular-highlight">
         <div class="mx-auto max-w-2xl relative z-10">
           <h2 class="text-3xl font-extrabold tracking-tight sm:text-4xl text-ink leading-tight">
             Stop worrying about staging email mistakes.
@@ -758,7 +685,7 @@
             Catch broken layouts, incorrect links, and staging errors before your customers ever see them.
           </p>
           <div class="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3.5">
-            @if (auth.isAuthenticated()) {
+            @if (navigationReady() && auth.isAuthenticated()) {
               <a
                 routerLink="/mailboxes"
                 class="btn btn-primary btn-md w-full sm:w-auto px-8 gap-2 shadow-sm font-semibold specular-highlight"
@@ -783,7 +710,7 @@
             }
           </div>
           <p class="mt-5 text-xs text-ink/50">
-            Generous free tier included &bull; No credit card required &bull; Ready in 30 seconds
+            {{ plans[0].limits.emailsPerMonth | number }} test emails per month &bull; No credit card required
           </p>
         </div>
       </div>
@@ -793,6 +720,7 @@
   <!-- ========================================================================= -->
   <!-- 9. FOOTER (NO ENGINEERING LINKS - POINT 10) -->
   <!-- ========================================================================= -->
+  </main>
   <footer class="border-t border-border bg-surface-raised/40 py-12 text-xs text-ink/65">
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
       <div class="grid grid-cols-2 md:grid-cols-4 gap-8 mb-10">
@@ -809,7 +737,7 @@
               <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-success opacity-75"></span>
               <span class="relative inline-flex rounded-full h-2 w-2 bg-success"></span>
             </span>
-            <span>All Systems Operational &bull; SMTP Port 2525</span>
+            <span>SMTP email testing &bull; Port 2525</span>
           </div>
         </div>
 
@@ -832,6 +760,8 @@
             <li><a routerLink="/register" class="hover:text-primary transition-colors">Create Free Account</a></li>
             <li><a routerLink="/forgot-password" class="hover:text-primary transition-colors">Reset Password</a></li>
             <li><a href="#faq" class="hover:text-primary transition-colors">FAQ</a></li>
+            <li><a routerLink="/docs" class="hover:text-primary transition-colors">SMTP testing guide</a></li>
+            <li><a href="/llms.txt" class="hover:text-primary transition-colors">LLM content index</a></li>
           </ul>
         </div>
       </div>

@@ -1,0 +1,19 @@
+# Email Sandbox
+
+> Email Sandbox is an SMTP email testing platform for developers. It captures development and staging messages for inspection instead of relaying them to real recipients.
+
+Free is the only plan available for self-service signup. Other plans are coming soon. This is an email testing sandbox, not a production email delivery service. Only public product information is included; no account data, captured emails, or credentials are published.
+
+## Product
+
+- [Product overview](https://email.dsourav.com/): Features, interactive demo, plan allowances, and frequently asked questions.
+- [SMTP email testing guide](https://email.dsourav.com/docs): Account activation, SMTP configuration, message inspection, organization roles, and troubleshooting.
+
+## Text resources
+
+- [SMTP guide in Markdown](https://email.dsourav.com/docs/email-testing.md): The public guide in plain Markdown.
+- [Full product context](https://email.dsourav.com/llms-full.txt): Product facts, plan limits, guide, and FAQ in one text file.
+
+## Optional
+
+- [Sitemap](https://email.dsourav.com/sitemap.xml): Canonical, indexable public HTML pages.

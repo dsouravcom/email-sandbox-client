@@ -1,4 +1,4 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { afterNextRender, Component, computed, inject, signal } from '@angular/core';
 import { DecimalPipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
@@ -7,6 +7,7 @@ import { AuthStore } from '../../../core/auth/auth-store';
 import { CopyButton } from '../../../shared/ui/copy-button/copy-button';
 import { ThemeSwitcher } from '../../../layout/theme-switcher/theme-switcher';
 import { AppLogo } from '../../../shared/ui/logo/logo';
+import site from '../../../core/seo/site-content.json';
 
 export interface DemoEmail {
   id: string;
@@ -33,29 +34,12 @@ export type HeroCodeTab = 'node' | 'curl' | 'python' | 'java' | 'go' | 'php';
 export class LandingPage {
   private readonly sanitizer = inject(DomSanitizer);
   protected readonly auth = inject(AuthStore);
-  /** Static landing-page features. Edit these values manually when changing advertised plans. */
-  protected readonly plans = [
-    {
-      name: 'free', available: true,
-      limits: { emailsPerSecond: 1, emailsPerMonth: 100, maxMailboxes: 1, maxTeamMembers: 1, maxEmailSizeMb: 5, retentionDays: 365 },
-    },
-    {
-      name: 'basic', available: false,
-      limits: { emailsPerSecond: 2, emailsPerMonth: 1_000, maxMailboxes: 5, maxTeamMembers: 5, maxEmailSizeMb: 7, retentionDays: null },
-    },
-    {
-      name: 'pro', available: false,
-      limits: { emailsPerSecond: 5, emailsPerMonth: 10_000, maxMailboxes: 20, maxTeamMembers: 20, maxEmailSizeMb: 10, retentionDays: null },
-    },
-    {
-      name: 'team', available: false,
-      limits: { emailsPerSecond: 10, emailsPerMonth: 50_000, maxMailboxes: 100, maxTeamMembers: 50, maxEmailSizeMb: 15, retentionDays: null },
-    },
-    {
-      name: 'business', available: false,
-      limits: { emailsPerSecond: 20, emailsPerMonth: 500_000, maxMailboxes: 500, maxTeamMembers: 100, maxEmailSizeMb: 25, retentionDays: null },
-    },
-  ];
+  /** Static marketing content, editable in site-content.json. */
+  protected readonly plans = site.plans;
+  protected readonly faqs = site.faqs;
+  protected readonly navigationReady = signal(false);
+
+  constructor() { afterNextRender(() => this.navigationReady.set(true)); }
 
   // Hero code snippet active tab
   protected readonly heroCodeTab = signal<HeroCodeTab>('node');
@@ -75,7 +59,7 @@ export class LandingPage {
     node: {
       label: 'Node.js',
       code: `// Node.js (Nodemailer)
-host: 'sandbox-smtp.email.dsourav.com',
+host: 'smtp.email.dsourav.com',
 port: 2525,
 auth: {
   user: 'your_username',
@@ -84,7 +68,7 @@ auth: {
     },
     curl: {
       label: 'cURL',
-      code: `curl --url 'smtp://sandbox-smtp.email.dsourav.com:2525' \\
+      code: `curl --url 'smtp://smtp.email.dsourav.com:2525' \\
   --user 'your_username:**************' \\
   --mail-from 'sender@example.com' \\
   --mail-rcpt 'recipient@example.com' \\
@@ -93,14 +77,14 @@ auth: {
     python: {
       label: 'Python',
       code: `# Python (smtplib)
-server = smtplib.SMTP('sandbox-smtp.email.dsourav.com', 2525)
+server = smtplib.SMTP('smtp.email.dsourav.com', 2525)
 server.login('your_username', '**************')
 server.sendmail(sender, recipient, message.as_string())`,
     },
     java: {
       label: 'Java',
       code: `// JavaMail Properties
-props.put("mail.smtp.host", "sandbox-smtp.email.dsourav.com");
+props.put("mail.smtp.host", "smtp.email.dsourav.com");
 props.put("mail.smtp.port", "2525");
 props.put("mail.smtp.auth", "true");
 // user: "your_username", pass: "**************"`,
@@ -108,14 +92,14 @@ props.put("mail.smtp.auth", "true");
     go: {
       label: 'Go',
       code: `// Go (net/smtp)
-auth := smtp.PlainAuth("", "your_username", "**************", "sandbox-smtp.email.dsourav.com")
-err := smtp.SendMail("sandbox-smtp.email.dsourav.com:2525", auth, from, to, msg)`,
+auth := smtp.PlainAuth("", "your_username", "**************", "smtp.email.dsourav.com")
+err := smtp.SendMail("smtp.email.dsourav.com:2525", auth, from, to, msg)`,
     },
     php: {
       label: 'PHP',
       code: `// Laravel .env or PHPMailer
 MAIL_MAILER=smtp
-MAIL_HOST=sandbox-smtp.email.dsourav.com
+MAIL_HOST=smtp.email.dsourav.com
 MAIL_PORT=2525
 MAIL_USERNAME=your_username
 MAIL_PASSWORD=**************`,
@@ -156,9 +140,9 @@ This email was sent by Acme. Please don't reply to it.`,
             <span style="font-size: 15px; font-weight: 600; color: #334155; letter-spacing: -0.2px;">Acme</span>
           </div>
 
-          <h1 style="font-size: 24px; font-weight: 700; color: #0f172a; margin: 0 0 16px; text-align: left; letter-spacing: -0.4px;">
+          <h3 style="font-size: 24px; font-weight: 700; color: #0f172a; margin: 0 0 16px; text-align: left; letter-spacing: -0.4px;">
             Confirm your email address
-          </h1>
+          </h3>
 
           <p style="font-size: 14px; line-height: 1.6; color: #334155; margin: 0 0 28px;">
             Thanks for signing up for Acme. Confirm this is your email address to finish creating your account.

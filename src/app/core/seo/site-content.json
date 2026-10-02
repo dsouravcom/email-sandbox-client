@@ -1,0 +1,168 @@
+{
+  "origin": "https://email.dsourav.com",
+  "name": "Email Sandbox",
+  "language": "en",
+  "image": {
+    "path": "/meta-image.webp",
+    "width": 1848,
+    "height": 889,
+    "alt": "Email Sandbox interface for capturing and inspecting transactional test emails"
+  },
+  "pages": {
+    "/": {
+      "title": "Email Sandbox — Free SMTP Email Testing for Developers",
+      "description": "Test transactional emails with an SMTP sandbox. Inspect HTML and text, preview mobile layouts, and start free with 100 test emails per month."
+    },
+    "/docs": {
+      "title": "SMTP Email Testing Guide — Email Sandbox",
+      "description": "Connect your development app to Email Sandbox with SMTP. Learn how to capture test emails, inspect HTML and text, and understand inbox and plan limits."
+    }
+  },
+  "plans": [
+    {
+      "name": "free",
+      "available": true,
+      "limits": {
+        "emailsPerSecond": 1,
+        "emailsPerMonth": 100,
+        "maxMailboxes": 1,
+        "maxTeamMembers": 1,
+        "maxEmailSizeMb": 5,
+        "retentionDays": 365
+      }
+    },
+    {
+      "name": "basic",
+      "available": false,
+      "limits": {
+        "emailsPerSecond": 2,
+        "emailsPerMonth": 1000,
+        "maxMailboxes": 5,
+        "maxTeamMembers": 5,
+        "maxEmailSizeMb": 7,
+        "retentionDays": null
+      }
+    },
+    {
+      "name": "pro",
+      "available": false,
+      "limits": {
+        "emailsPerSecond": 5,
+        "emailsPerMonth": 10000,
+        "maxMailboxes": 20,
+        "maxTeamMembers": 20,
+        "maxEmailSizeMb": 10,
+        "retentionDays": null
+      }
+    },
+    {
+      "name": "team",
+      "available": false,
+      "limits": {
+        "emailsPerSecond": 10,
+        "emailsPerMonth": 50000,
+        "maxMailboxes": 100,
+        "maxTeamMembers": 50,
+        "maxEmailSizeMb": 15,
+        "retentionDays": null
+      }
+    },
+    {
+      "name": "business",
+      "available": false,
+      "limits": {
+        "emailsPerSecond": 20,
+        "emailsPerMonth": 500000,
+        "maxMailboxes": 500,
+        "maxTeamMembers": 100,
+        "maxEmailSizeMb": 25,
+        "retentionDays": null
+      }
+    }
+  ],
+  "faqs": [
+    {
+      "question": "Does Email Sandbox send test emails to real recipients?",
+      "answer": "The sandbox SMTP service captures messages in your testing inbox and does not relay them to external recipients. Configure your development or staging app to use your sandbox SMTP credentials instead of your production mail provider."
+    },
+    {
+      "question": "How do I connect my website or application?",
+      "answer": "Create a Free account, verify your email, and copy the SMTP host, port, username, and password from your inbox. Set these values in your application's mail configuration. SMTP libraries in Node.js, Python, PHP, Java, and Go can connect to the sandbox."
+    },
+    {
+      "question": "What does the Free plan include?",
+      "answer": "Free includes 100 test emails per calendar month, a sending rate of 1 email per second, 1 inbox, 1 team seat including the owner, a 5 MB maximum email size, and 1 year of email retention. Allowances are shared within an organization."
+    },
+    {
+      "question": "Are email attachment files stored?",
+      "answer": "Attachment names and metadata are available for inspection, but attachment file contents are discarded on every plan. Email Sandbox does not provide attachment downloads."
+    },
+    {
+      "question": "Can I preview emails at mobile and tablet widths?",
+      "answer": "Yes. The email preview provides desktop, tablet, and mobile viewport widths, alongside HTML and plain-text views. These are browser previews, not simulations of every email client."
+    },
+    {
+      "question": "Can I upgrade to Basic, Pro, Team, or Business?",
+      "answer": "Only Free is available for self-service signup. Basic, Pro, Team, and Business are coming soon; there is currently no payment or self-service upgrade flow."
+    }
+  ],
+  "guide": [
+    {
+      "id": "smtp-sandbox",
+      "title": "What is an SMTP email sandbox?",
+      "paragraphs": [
+        "An SMTP email sandbox captures messages from your development or staging application in a test inbox. It helps you inspect welcome emails, password resets, confirmation links, and other transactional messages before configuring production delivery.",
+        "Email Sandbox stores captured messages for inspection instead of relaying them to real recipients. It is a testing tool, not a production email delivery service."
+      ]
+    },
+    {
+      "id": "connect",
+      "title": "Connect your application in three steps",
+      "steps": [
+        "Create a Free account and verify your email address. Your initial personal organization and inbox are created during account activation.",
+        "Open your inbox and copy its SMTP host, port, username, and password. Keep credentials in your application's secret or environment configuration, not in public repositories.",
+        "Replace the mail settings in your development or staging environment with the sandbox settings and send a test message. Use your production mail provider separately for production delivery."
+      ],
+      "paragraphs": [
+        "The published SMTP endpoint is smtp.email.dsourav.com on port 2525. Use the values shown in your inbox as the source of truth. Credentials are specific to an inbox.",
+        "Node.js (Nodemailer), Python (smtplib), PHP mail libraries, Java mail libraries, and Go SMTP clients can use these settings. Match TLS settings to the server configuration shown in your inbox."
+      ]
+    },
+    {
+      "id": "inspect",
+      "title": "Inspect captured test emails",
+      "paragraphs": [
+        "Open a captured message to review its sender, recipients, subject, HTML, plain text, and headers. Inspect confirmation links and verification codes as part of your application's test workflow.",
+        "Switch the preview between desktop, tablet, and mobile widths to look for layout issues. Browser previews do not reproduce the rendering behavior of every mail client. Attachment names and metadata can be inspected, but attachment file contents are not stored or downloadable."
+      ]
+    },
+    {
+      "id": "limits",
+      "title": "Understand plans and usage limits",
+      "paragraphs": [
+        "Free includes 100 test emails per calendar month, 1 email per second, 1 inbox, 1 team seat including the owner, a maximum email size of 5 MB, and 365 days of retention.",
+        "Monthly usage resets at the start of the next calendar month in UTC. Deleting messages does not reset usage. Allowances are shared across an organization's inboxes.",
+        "Basic, Pro, Team, and Business are listed as coming soon. Only Free is available for self-service signup. There is no public payment or upgrade flow. Subscription changes, when assigned by an operator, apply to the organization and return to Free when their assigned term expires."
+      ]
+    },
+    {
+      "id": "organizations",
+      "title": "Organizations and team access",
+      "paragraphs": [
+        "An account can create and join multiple organizations. Each organization has separate inboxes, usage limits, membership, and roles.",
+        "Owners and administrators can manage inboxes and invite users when the plan has spare seats. Members can inspect, mark, and delete individual emails; viewers can inspect without changing them. Owners manage administrator roles and shared-organization ownership.",
+        "Invitations are tied to the invited email address and expire after 7 days by default. Unexpired pending invitations reserve seats. Free's single seat is occupied by its owner, so additional members require an organization with a higher seat allowance."
+      ]
+    },
+    {
+      "id": "troubleshooting",
+      "title": "Troubleshoot SMTP testing",
+      "steps": [
+        "If a connection fails, check the hostname, port, your network's outbound SMTP rules, and the TLS settings shown for the inbox.",
+        "If authentication fails, confirm the inbox's username and password. Regenerating a password invalidates previous credentials.",
+        "If sending is rejected, check whether the inbox is paused, the organization's monthly allowance is exhausted, the message exceeds its size limit, or messages arrive faster than the plan's rate.",
+        "If team access changes, review the user's membership status and the organization's current plan. An expired paid subscription falls back to Free limits."
+      ]
+    }
+  ]
+}

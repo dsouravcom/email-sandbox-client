@@ -4,6 +4,7 @@ import { guestGuard } from './core/auth/guest-guard';
 
 /** Every page is lazy-loaded, so each one ships in its own bundle. */
 export const routes: Routes = [
+  { path: 'docs', title: 'SMTP Email Testing Guide — Email Sandbox', loadComponent: () => import('./features/docs/smtp-guide').then((m) => m.SmtpGuide) },
   {
     path: '',
     pathMatch: 'full',
@@ -91,5 +92,5 @@ export const routes: Routes = [
       },
     ],
   },
-  { path: '**', redirectTo: '' },
+  { path: '**', title: 'Page not found · Email Sandbox', loadComponent: () => import('./features/not-found/not-found').then((m) => m.NotFound) },
 ];

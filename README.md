@@ -28,6 +28,8 @@ ng generate --help
 
 ## Building
 
+Public pages are prerendered for search engines. `npm run build` generates runtime configuration, the sitemap, robots.txt, and public LLM resources before building. Edit `src/app/core/seo/site-content.json` for public facts and metadata, and set `SITE_URL` to the production HTTPS origin when changing domains. See [SEO and deployment checks](../docs/seo.md); public routes must serve their prerendered HTML rather than `index.csr.html`.
+
 To build the project run:
 
 ```bash

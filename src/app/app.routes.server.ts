@@ -1,14 +1,32 @@
 import { RenderMode, ServerRoute } from '@angular/ssr';
 
 /**
- * The current pages depend on the signed-in user, and only the browser holds
- * the session (httpOnly refresh cookie + in-memory access token), so they are
- * rendered client-side. Public pages added later (e.g. blog posts) can use
- * `RenderMode.Server` or `RenderMode.Prerender`.
+ * Public content is delivered as build-time HTML. Account pages remain client-only.
  */
 export const serverRoutes: ServerRoute[] = [
+  { path: '', renderMode: RenderMode.Prerender },
+  { path: 'docs', renderMode: RenderMode.Prerender },
+  ...[
+    'mailboxes',
+    'mailbox/:mailboxId',
+    'mailbox/:mailboxId/email/:emailId',
+    'organization',
+    'profile',
+    'login',
+    'register',
+    'verify-email',
+    'login-verify',
+    'forgot-password',
+    'reset-password',
+  ].map((path): ServerRoute => ({
+    path,
+    renderMode: RenderMode.Client,
+    headers: { 'X-Robots-Tag': 'noindex, nofollow' },
+  })),
   {
     path: '**',
-    renderMode: RenderMode.Client,
+    renderMode: RenderMode.Server,
+    status: 404,
+    headers: { 'X-Robots-Tag': 'noindex, nofollow' },
   },
 ];
