@@ -1,5 +1,4 @@
-import { isPlatformBrowser } from '@angular/common';
-import { computed, inject, PLATFORM_ID, Service, signal } from '@angular/core';
+import { computed, inject, Service, signal } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
 import { getApiErrorMessage } from '../http/api-error';
 import { OrganizationApi } from './organization-api';
@@ -15,7 +14,6 @@ const CURRENT_ORGANIZATION_KEY = 'current-organization-id';
 @Service()
 export class OrganizationStore {
   private readonly api = inject(OrganizationApi);
-  private readonly platformId = inject(PLATFORM_ID);
 
   private readonly _organizations = signal<Organization[]>([]);
   private readonly _currentOrganizationId = signal<string | null>(null);
@@ -29,8 +27,12 @@ export class OrganizationStore {
   readonly currentOrganization = computed(
     () => this._organizations().find((org) => org.id === this._currentOrganizationId()) ?? null,
   );
-  readonly canManage = computed(() => ['owner', 'admin'].includes(this.currentOrganization()?.role ?? ''));
-  readonly canManageEmails = computed(() => ['owner', 'admin', 'member'].includes(this.currentOrganization()?.role ?? ''));
+  readonly canManage = computed(() =>
+    ['owner', 'admin'].includes(this.currentOrganization()?.role ?? ''),
+  );
+  readonly canManageEmails = computed(() =>
+    ['owner', 'admin', 'member'].includes(this.currentOrganization()?.role ?? ''),
+  );
 
   /** Fetches every organization the user belongs to and picks the active one (persisted, falling back to the first). */
   async loadOrganizations(): Promise<void> {
@@ -40,7 +42,8 @@ export class OrganizationStore {
       const { data } = await firstValueFrom(this.api.list());
       this._organizations.set(data);
       const stored = this.readStoredId();
-      const preferred = stored && data.some((org) => org.id === stored) ? stored : (data[0]?.id ?? null);
+      const preferred =
+        stored && data.some((org) => org.id === stored) ? stored : (data[0]?.id ?? null);
       this.selectOrganization(preferred);
     } catch (error) {
       this._error.set(getApiErrorMessage(error));
@@ -51,7 +54,6 @@ export class OrganizationStore {
 
   selectOrganization(organizationId: string | null): void {
     this._currentOrganizationId.set(organizationId);
-    if (!isPlatformBrowser(this.platformId)) return;
     try {
       if (organizationId) {
         localStorage.setItem(CURRENT_ORGANIZATION_KEY, organizationId);
@@ -65,7 +67,9 @@ export class OrganizationStore {
 
   /** Applies a fresh copy of the current organization after a settings update. */
   applyUpdate(organization: Organization): void {
-    this._organizations.update((orgs) => orgs.map((org) => (org.id === organization.id ? organization : org)));
+    this._organizations.update((orgs) =>
+      orgs.map((org) => (org.id === organization.id ? organization : org)),
+    );
   }
 
   reset(): void {
@@ -75,7 +79,6 @@ export class OrganizationStore {
   }
 
   private readStoredId(): string | null {
-    if (!isPlatformBrowser(this.platformId)) return null;
     try {
       return localStorage.getItem(CURRENT_ORGANIZATION_KEY);
     } catch {

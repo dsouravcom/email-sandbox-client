@@ -23,7 +23,7 @@
       <div class="flex items-center gap-3">
         <app-theme-switcher />
 
-        @if (navigationReady() && auth.isAuthenticated()) {
+        @if (auth.isAuthenticated()) {
           <a
             routerLink="/mailboxes"
             class="btn btn-primary btn-sm gap-2 shadow-xs font-semibold specular-highlight"
@@ -83,7 +83,7 @@
 
           <!-- Action Buttons -->
           <div class="mt-8 flex flex-col sm:flex-row items-stretch sm:items-center gap-3.5">
-            @if (navigationReady() && auth.isAuthenticated()) {
+            @if (auth.isAuthenticated()) {
               <a
                 routerLink="/mailboxes"
                 class="btn btn-primary btn-md px-8 gap-2 shadow-sm font-semibold text-base specular-highlight"
@@ -685,7 +685,7 @@
             Catch broken layouts, incorrect links, and staging errors before your customers ever see them.
           </p>
           <div class="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3.5">
-            @if (navigationReady() && auth.isAuthenticated()) {
+            @if (auth.isAuthenticated()) {
               <a
                 routerLink="/mailboxes"
                 class="btn btn-primary btn-md w-full sm:w-auto px-8 gap-2 shadow-sm font-semibold specular-highlight"

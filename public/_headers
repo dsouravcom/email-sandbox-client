@@ -1,0 +1,38 @@
+/mailboxes
+  X-Robots-Tag: noindex, nofollow
+/mailboxes/*
+  X-Robots-Tag: noindex, nofollow
+/mailbox/*
+  X-Robots-Tag: noindex, nofollow
+/organization
+  X-Robots-Tag: noindex, nofollow
+/organization/*
+  X-Robots-Tag: noindex, nofollow
+/profile
+  X-Robots-Tag: noindex, nofollow
+/profile/*
+  X-Robots-Tag: noindex, nofollow
+/login
+  X-Robots-Tag: noindex, nofollow
+/login/*
+  X-Robots-Tag: noindex, nofollow
+/register
+  X-Robots-Tag: noindex, nofollow
+/register/*
+  X-Robots-Tag: noindex, nofollow
+/verify-email
+  X-Robots-Tag: noindex, nofollow
+/login-verify
+  X-Robots-Tag: noindex, nofollow
+/forgot-password
+  X-Robots-Tag: noindex, nofollow
+/reset-password
+  X-Robots-Tag: noindex, nofollow
+/404.html
+  X-Robots-Tag: noindex, nofollow
+/llms.txt
+  Content-Type: text/plain; charset=utf-8
+/llms-full.txt
+  Content-Type: text/plain; charset=utf-8
+/docs/email-testing.md
+  Content-Type: text/plain; charset=utf-8

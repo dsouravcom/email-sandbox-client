@@ -1,61 +1,23 @@
-# Client
+# Email Sandbox frontend
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 22.1.8.
+A browser-only Angular application. UI components, routing, forms, local state, and API clients live here. Authentication, authorization, plan enforcement, SMTP handling, and persistence live in the separate NestJS server.
 
-## Development server
+## Development
 
-To start a local development server, run:
+Use Node.js 24 (`.nvmrc`), run `npm ci`, and copy `.env.example` to `.env`. Set the public API URL and Turnstile site key, then run:
 
-```bash
-ng serve
+```sh
+npm start
+npm test -- --watch=false
+npm run build
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+The build outputs `dist/client/browser`. There is no SSR, prerendering, hydration, Express server, edge handler, or provider runtime. Dependencies are standard Angular browser libraries and frontend build/test tools.
 
-## Code scaffolding
+## Configuration and SEO
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+The small build scripts read public environment variables and generate metadata/crawler text. They are build tools, not deployed servers. Edit `src/app/core/seo/site-content.json` for public product facts, plans, FAQ, and page metadata. `SITE_URL` sets the canonical HTTPS origin.
 
-```bash
-ng generate component component-name
-```
+Public pages render in the browser. Page titles, descriptions, canonicals, and JSON-LD update on navigation. The initial HTML includes generic sharing tags using `public/meta-image.webp`; robots.txt, sitemap.xml, and LLM text resources remain static assets. Crawlers need JavaScript for full page content.
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
-
-```bash
-ng generate --help
-```
-
-## Building
-
-Public pages are prerendered for search engines. `npm run build` generates runtime configuration, the sitemap, robots.txt, and public LLM resources before building. Edit `src/app/core/seo/site-content.json` for public facts and metadata, and set `SITE_URL` to the production HTTPS origin when changing domains. See [SEO and deployment checks](../docs/seo.md); public routes must serve their prerendered HTML rather than `index.csr.html`.
-
-To build the project run:
-
-```bash
-ng build
-```
-
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+See [hosting setup](HOSTING.md) for direct-link routing and API domain configuration. Keep frontend API models consistent with the NestJS responses when changing features.

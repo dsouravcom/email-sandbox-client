@@ -1,5 +1,4 @@
-import { isPlatformBrowser } from '@angular/common';
-import { effect, inject, PLATFORM_ID, Service, signal } from '@angular/core';
+import { effect, Service, signal } from '@angular/core';
 
 export type ThemePreference = 'light' | 'dark' | 'system';
 
@@ -16,8 +15,6 @@ const STORAGE_KEY = 'theme-preference';
  */
 @Service()
 export class Theme {
-  private readonly platformId = inject(PLATFORM_ID);
-
   readonly preference = signal<ThemePreference>(this.readStored());
 
   constructor() {
@@ -26,17 +23,14 @@ export class Theme {
 
   setPreference(preference: ThemePreference): void {
     this.preference.set(preference);
-    if (isPlatformBrowser(this.platformId)) {
-      try {
-        localStorage.setItem(STORAGE_KEY, preference);
-      } catch {
-        // Storage unavailable (private browsing, etc.) — the choice just won't persist.
-      }
+    try {
+      localStorage.setItem(STORAGE_KEY, preference);
+    } catch {
+      // Storage unavailable — the choice just won't persist.
     }
   }
 
   private readStored(): ThemePreference {
-    if (!isPlatformBrowser(this.platformId)) return 'system';
     try {
       const stored = localStorage.getItem(STORAGE_KEY);
       return stored === 'light' || stored === 'dark' ? stored : 'system';
@@ -46,7 +40,6 @@ export class Theme {
   }
 
   private apply(preference: ThemePreference): void {
-    if (!isPlatformBrowser(this.platformId)) return;
     const root = document.documentElement;
     if (preference === 'system') {
       root.removeAttribute('data-theme');

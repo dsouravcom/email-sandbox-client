@@ -4,7 +4,7 @@ import { RouterStateSnapshot, TitleStrategy } from '@angular/router';
 import { RUNTIME_SITE_URL } from '../http/runtime-config.generated';
 import site from './site-content.json';
 
-/** The same metadata is rendered at build time and updated during client navigation. */
+/** Updates public metadata and account indexing rules during browser navigation. */
 @Injectable()
 export class SeoTitleStrategy extends TitleStrategy {
   private readonly document = inject(DOCUMENT);

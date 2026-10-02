@@ -1,0 +1,18 @@
+# Public pages and account screens are browser-rendered Angular routes.
+/docs /index.html 200
+/docs/ /index.html 200
+/mailboxes /index.html 200
+/mailboxes/ /index.html 200
+/mailbox/* /index.html 200
+/organization /index.html 200
+/organization/ /index.html 200
+/profile /index.html 200
+/profile/ /index.html 200
+/login /index.html 200
+/login/ /index.html 200
+/register /index.html 200
+/register/ /index.html 200
+/verify-email /index.html 200
+/login-verify /index.html 200
+/forgot-password /index.html 200
+/reset-password /index.html 200

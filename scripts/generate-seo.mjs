@@ -30,6 +30,40 @@ const escapeXml = (value) =>
       ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&apos;' })[character],
   );
 
+// Sharing crawlers can read these tags without JavaScript. Route-specific metadata
+// is updated by Angular in the browser; there is no server rendering step.
+const page = site.pages['/'];
+const initialHead = [
+  `<title>${escapeXml(page.title)}</title>`,
+  `<meta name="description" content="${escapeXml(page.description)}">`,
+  '<meta name="robots" content="index, follow, max-image-preview:large">',
+  ...Object.entries({
+    'og:type': 'website',
+    'og:site_name': site.name,
+    'og:title': page.title,
+    'og:description': page.description,
+    'og:image': origin + site.image.path,
+    'og:image:alt': site.image.alt,
+  }).map(([property, content]) => `<meta property="${property}" content="${escapeXml(content)}">`),
+  '<meta name="twitter:card" content="summary_large_image">',
+  `<meta name="twitter:title" content="${escapeXml(page.title)}">`,
+  `<meta name="twitter:description" content="${escapeXml(page.description)}">`,
+  `<meta name="twitter:image" content="${escapeXml(origin + site.image.path)}">`,
+]
+  .map((tag) => '  ' + tag)
+  .join('\n');
+const indexFile = new URL('../src/index.html', import.meta.url);
+const index = readFileSync(indexFile, 'utf8');
+const headMarker = /<!-- PUBLIC_SEO_START -->[\s\S]*?<!-- PUBLIC_SEO_END -->/;
+if (!headMarker.test(index)) throw new Error('Missing public SEO markers in src/index.html.');
+writeFileSync(
+  indexFile,
+  index.replace(
+    headMarker,
+    '<!-- PUBLIC_SEO_START -->\n' + initialHead + '\n  <!-- PUBLIC_SEO_END -->',
+  ),
+);
+
 write(
   'sitemap.xml',
   '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' +

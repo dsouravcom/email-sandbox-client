@@ -1,4 +1,4 @@
-import { afterNextRender, Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { DecimalPipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
@@ -37,9 +37,7 @@ export class LandingPage {
   /** Static marketing content, editable in site-content.json. */
   protected readonly plans = site.plans;
   protected readonly faqs = site.faqs;
-  protected readonly navigationReady = signal(false);
 
-  constructor() { afterNextRender(() => this.navigationReady.set(true)); }
 
   // Hero code snippet active tab
   protected readonly heroCodeTab = signal<HeroCodeTab>('node');

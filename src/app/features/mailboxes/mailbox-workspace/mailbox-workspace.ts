@@ -1,5 +1,4 @@
-import { isPlatformBrowser } from '@angular/common';
-import { Component, DestroyRef, effect, inject, input, PLATFORM_ID } from '@angular/core';
+import { Component, DestroyRef, effect, inject, input } from '@angular/core';
 import { Router } from '@angular/router';
 import { ProvisioningResult } from '../../../core/auth/auth-models';
 import { EmailStore } from '../../../core/emails/email-store';
@@ -25,7 +24,6 @@ import { EmailPreview } from '../email-preview/email-preview';
 })
 export class MailboxWorkspace {
   private readonly router = inject(Router);
-  private readonly platformId = inject(PLATFORM_ID);
   protected readonly mailboxStore = inject(MailboxStore);
   protected readonly emailStore = inject(EmailStore);
 
@@ -73,7 +71,6 @@ export class MailboxWorkspace {
   }
 
   private readProvisioningFromHistory(): ProvisioningResult | null {
-    if (!isPlatformBrowser(this.platformId)) return null;
     return (history.state?.['provisioning'] as ProvisioningResult | undefined) ?? null;
   }
 }
