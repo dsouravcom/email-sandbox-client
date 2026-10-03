@@ -4,7 +4,7 @@ A browser-only Angular application. UI components, routing, forms, local state, 
 
 ## Development
 
-Use Node.js 24 (`.nvmrc`), run `npm ci`, and copy `.env.example` to `.env`. Set the public API URL and Turnstile site key, then run:
+Use Node.js 24.20.0 (`.nvmrc`) with its bundled npm, run `npm ci`, and copy `.env.example` to `.env`. Set the public API URL and Turnstile site key, then run:
 
 ```sh
 npm start

@@ -1,6 +1,8 @@
 # Hosting the Angular frontend
 
-Build command: `npm run build`. Publish directory: **`dist/client/browser`**. Use Node.js 24 and run `npm ci` to install dependencies.
+Build command: `npm run build`. Publish directory: **`dist/client/browser`**. Use Node.js **24.20.0** (pinned in `.nvmrc`) and run `npm ci` to install dependencies. Angular requires at least Node 24.15.0 in the Node 24 series. Use the npm bundled with Node; the project does not force installation of npm 12.
+
+On Cloudflare Pages, set `NODE_VERSION=24.20.0` for Production and Preview, replacing any older Node override, and deploy the updated commit. Remove an explicit `NPM_VERSION=12.0.2` override if configured. A major-only Node pin can select an older release: Node 24.13.1 cannot run the current Angular toolchain. [Cloudflare version settings](https://developers.cloudflare.com/pages/configuration/build-image/#override-default-versions).
 
 Set these public build variables:
 
@@ -13,6 +15,8 @@ This is a browser-only single-page app. Only `index.html`, scripts, styles, imag
 ## Routing
 
 Cloudflare Pages and Netlify can use the checked-in `public/_redirects` and `public/_headers`, copied into the build by Angular. Known application URLs serve `/index.html`; account routes have indexing exclusions. Missing public URLs use `404.html`. No SSR runtime plugin is required. Remove a manually installed Angular SSR plugin in the hosting dashboard if one remains.
+
+**Required when migrating an existing Netlify SSR site:** go to **Project configuration → Developer settings → Build plugins**, find **`@netlify/angular-runtime`**, and select **Disable**. Removing the package from this repository does not disable a plugin installed in the dashboard. Keep build command `npm run build` and publish directory `dist/client/browser`, then trigger a new deployment. If the deploy log still lists this plugin with `origin: ui`, it is still enabled in Netlify. An obsolete `dist/client/server` directory can make that plugin attempt SSR and fail with `ENOENT ... server/index.server.html`; adding server files back is not the fix for this browser-only app. [Netlify's removal instructions](https://docs.netlify.com/extend/install-and-use/build-plugins/#remove-a-plugin).
 
 On other static servers, configure equivalent SPA routing for application URLs and preserve real assets. For Nginx, the basic app routing is:
 
