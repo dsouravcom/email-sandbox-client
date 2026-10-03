@@ -11,11 +11,24 @@
   "pages": {
     "/": {
       "title": "Email Sandbox — Free SMTP Email Testing for Developers",
-      "description": "Test transactional emails with an SMTP sandbox. Inspect HTML and text, preview mobile layouts, and start free with 100 test emails per month."
+      "description": "Test transactional emails with an SMTP sandbox. Inspect HTML and text, preview mobile layouts, and start free with 100 test emails per month.",
+      "keywords": [
+        "email sandbox",
+        "SMTP testing",
+        "email testing",
+        "transactional email testing",
+        "HTML email preview"
+      ]
     },
     "/docs": {
       "title": "SMTP Email Testing Guide — Email Sandbox",
-      "description": "Connect your development app to Email Sandbox with SMTP. Learn how to capture test emails, inspect HTML and text, and understand inbox and plan limits."
+      "description": "Connect your development app to Email Sandbox with SMTP. Learn how to capture test emails, inspect HTML and text, and understand inbox and plan limits.",
+      "keywords": [
+        "SMTP testing guide",
+        "email sandbox setup",
+        "SMTP configuration",
+        "development email testing"
+      ]
     }
   },
   "plans": [

@@ -19,7 +19,7 @@ describe('public page SEO', () => {
   afterEach(() => {
     document
       .querySelectorAll(
-        '#site-structured-data, link[rel="canonical"], meta[property^="og:"], meta[name^="twitter:"], meta[name="description"], meta[name="robots"]',
+        '#site-structured-data, link[rel="canonical"], meta[property^="og:"], meta[name^="twitter:"], meta[name="description"], meta[name="robots"], meta[name="keywords"]',
       )
       .forEach((node) => node.remove());
     vi.restoreAllMocks();
@@ -30,6 +30,10 @@ describe('public page SEO', () => {
   }
 
   it('uses clean canonical URLs and the public meta image, without duplicate tags', () => {
+    const initialCanonical = document.createElement('link');
+    initialCanonical.rel = 'canonical';
+    initialCanonical.href = RUNTIME_SITE_URL + '/';
+    document.head.appendChild(initialCanonical);
     visit('/?campaign=test#pricing');
     visit('/');
     expect(document.title).toBe(site.pages['/'].title);
@@ -41,6 +45,13 @@ describe('public page SEO', () => {
       RUNTIME_SITE_URL + site.image.path,
     );
     expect(document.querySelectorAll('meta[property="og:image"]')).toHaveLength(1);
+    expect(document.querySelectorAll('meta[property="og:url"]')).toHaveLength(1);
+    expect(document.querySelector('meta[property="og:url"]')?.getAttribute('content')).toBe(
+      RUNTIME_SITE_URL + '/',
+    );
+    expect(document.querySelector('meta[name="keywords"]')?.getAttribute('content')).toBe(
+      site.pages['/'].keywords.join(', '),
+    );
     expect(document.querySelector('meta[name="robots"]')?.getAttribute('content')).toMatch(
       /^index, follow/,
     );
@@ -71,6 +82,12 @@ describe('public page SEO', () => {
     expect(document.querySelector('link[rel="canonical"]')?.getAttribute('href')).toBe(
       RUNTIME_SITE_URL + '/docs',
     );
+    expect(document.querySelector('meta[property="og:url"]')?.getAttribute('content')).toBe(
+      RUNTIME_SITE_URL + '/docs',
+    );
+    expect(document.querySelector('meta[name="keywords"]')?.getAttribute('content')).toBe(
+      site.pages['/docs'].keywords.join(', '),
+    );
     const graph = JSON.parse(document.querySelector('#site-structured-data')!.textContent!)[
       '@graph'
     ];
@@ -88,6 +105,7 @@ describe('public page SEO', () => {
       expect(document.querySelector('link[rel="canonical"]')).toBeNull();
       expect(document.querySelector('#site-structured-data')).toBeNull();
       expect(document.querySelector('meta[property="og:image"]')).toBeNull();
+      expect(document.querySelector('meta[name="keywords"]')).toBeNull();
     }
   });
 });

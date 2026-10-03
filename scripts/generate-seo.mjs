@@ -36,12 +36,15 @@ const page = site.pages['/'];
 const initialHead = [
   `<title>${escapeXml(page.title)}</title>`,
   `<meta name="description" content="${escapeXml(page.description)}">`,
+  `<meta name="keywords" content="${escapeXml(page.keywords.join(', '))}">`,
+  `<link rel="canonical" href="${escapeXml(origin + '/')}">`,
   '<meta name="robots" content="index, follow, max-image-preview:large">',
   ...Object.entries({
     'og:type': 'website',
     'og:site_name': site.name,
     'og:title': page.title,
     'og:description': page.description,
+    'og:url': origin + '/',
     'og:image': origin + site.image.path,
     'og:image:alt': site.image.alt,
   }).map(([property, content]) => `<meta property="${property}" content="${escapeXml(content)}">`),

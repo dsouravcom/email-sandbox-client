@@ -27,6 +27,8 @@ export class SeoTitleStrategy extends TitleStrategy {
         ? 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1'
         : 'noindex, nofollow',
     });
+    if (page) this.meta.updateTag({ name: 'keywords', content: page.keywords.join(', ') });
+    else this.meta.removeTag('name="keywords"');
     this.document.querySelector('#site-structured-data')?.remove();
     this.document.querySelector('link[rel="canonical"]')?.remove();
     for (const element of this.document.querySelectorAll(
