@@ -47,6 +47,7 @@ export class LoginVerify {
           this.errorMessage.set(null);
 
           try {
+            await this.authStore.verifyLogin(field().value());
             const destination = this.navigationState?.['returnUrl'];
             await this.router.navigateByUrl(destination && destination !== '/' ? destination : '/mailboxes');
           } catch (error) {
